@@ -1,0 +1,159 @@
+{
+    "clientName": "Thunder Client",
+    "collectionName": "messenger",
+    "collectionId": "f044fc19-4c79-465d-adfb-8496b5147ccc",
+    "dateExported": "2024-10-09T21:02:09.837Z",
+    "version": "1.2",
+    "folders": [],
+    "requests": [
+        {
+            "_id": "d0d3c02a-dbe6-4074-a7bb-0fabd0d051ad",
+            "colId": "f044fc19-4c79-465d-adfb-8496b5147ccc",
+            "containerId": "",
+            "name": "register",
+            "url": "http://localhost:5000/api/auth/register",
+            "method": "POST",
+            "sortNum": 10000,
+            "created": "2024-10-09T20:20:05.559Z",
+            "modified": "2024-10-09T20:20:05.559Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"username\": \"kafka\",\n  \"email\": \"kafka@mail.com\",\n  \"password\": \"freePalestine99\"\n}",
+                "form": []
+            }
+        },
+        {
+            "_id": "50bf8ee3-4799-4ac2-a879-d5cc793f9c92",
+            "colId": "f044fc19-4c79-465d-adfb-8496b5147ccc",
+            "containerId": "",
+            "name": "login",
+            "url": "http://localhost:5000/api/auth",
+            "method": "POST",
+            "sortNum": 20000,
+            "created": "2024-10-09T20:20:15.610Z",
+            "modified": "2024-10-09T20:20:43.402Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"identity\": \"arridhaamrad\",\n  \"password\": \"freePalestine99\"\n}",
+                "form": []
+            }
+        },
+        {
+            "_id": "9218f10a-51da-4cb5-b18d-63790ea95091",
+            "colId": "f044fc19-4c79-465d-adfb-8496b5147ccc",
+            "containerId": "",
+            "name": "search",
+            "url": "http://localhost:5000/api/user/search?key=",
+            "method": "GET",
+            "sortNum": 20000,
+            "created": "2024-10-09T20:21:56.639Z",
+            "modified": "2024-10-09T20:26:09.861Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "key",
+                    "value": "",
+                    "isPath": false
+                }
+            ]
+        },
+        {
+            "_id": "3ac7c987-5708-4b98-a8ce-b6bf74ec81e7",
+            "colId": "f044fc19-4c79-465d-adfb-8496b5147ccc",
+            "containerId": "",
+            "name": "send message",
+            "url": "http://localhost:5000/api/chats/send",
+            "method": "POST",
+            "sortNum": 30000,
+            "created": "2024-10-09T20:20:57.664Z",
+            "modified": "2024-10-09T20:37:00.937Z",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJ5ZF9SQUxVRl9vcU9uVjMiLCJ0eXBlIjoiYXV0aCIsInRva2VuSWQiOm51bGwsImlhdCI6MTcyODUwNTI0MywiZXhwIjoxNzI4NTEyNDQzfQ.XC_-r6P3lDnT8pxJkqmFEQ9lTVf3Iuld5KEcw4J6B6Pypap1hqWgrgaOSKsdCXJGlval8F2-1K8BHt5fTWF0ODRrXVM8EEkRm0GwcXMJ-tAOmw6boIlOuOR4791AOxkOiJeMDkKcEU2IdUN0yj8xi16W3QFgFS3cyySZAvxMEAgs9MKiwe-p_e-2ZPLnMABYkklz2636uLhKCwHJGRmLSDvAIVVjraPnooR_uC8S9QjMrPQX57aFt923U3i1L5eVpSGkd8awNeHEd3WACdC4dqqHZaPG-RV6gBGS-j8Lmc5IG5T3_G_Xjaf4MikraFWLwjjkpSUGmNtlQFQNiKniqg"
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"content\": \"see u in future\", \n  \"receiverUserId\": \"k2N21GB3asGXtRE\",\n  \"chatId\": \"Eqj8tnBZw09JQi6\"\n}",
+                "form": []
+            }
+        },
+        {
+            "_id": "c9b7c94a-bab2-484e-844f-b4e36b613584",
+            "colId": "f044fc19-4c79-465d-adfb-8496b5147ccc",
+            "containerId": "",
+            "name": "login (busra)",
+            "url": "http://localhost:5000/api/auth",
+            "method": "POST",
+            "sortNum": 30000,
+            "created": "2024-10-09T20:33:15.203Z",
+            "modified": "2024-10-09T20:37:18.543Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"identity\": \"beyazit\",\n  \"password\": \"freePalestine99\"\n}",
+                "form": []
+            }
+        },
+        {
+            "_id": "fa209156-2f36-4682-b49d-2053b2bfa969",
+            "colId": "f044fc19-4c79-465d-adfb-8496b5147ccc",
+            "containerId": "",
+            "name": "send message (busra)",
+            "url": "http://localhost:5000/api/chats/send",
+            "method": "POST",
+            "sortNum": 40000,
+            "created": "2024-10-09T20:34:02.860Z",
+            "modified": "2024-10-09T20:38:45.933Z",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJrMk4yMUdCM2FzR1h0UkUiLCJ0eXBlIjoiYXV0aCIsInRva2VuSWQiOm51bGwsImlhdCI6MTcyODUwNjIzOCwiZXhwIjoxNzI4NTEzNDM4fQ.BOoVjBLZaALf1QhohmitTaawnQYmydxfwJDw0bMKCvUqccIj-_nhSneo0dA1gObUkvpsOzg8nBosXrHjV8lsv0EryMhEL9KbobdvPXyACo3ff456kllbI7KEs6NyXfRW1spOC_8vHZIy0OCSglRi_Wo_FVAD7lmS3raz-PyIBol94l7tAaG7Dp3_uFdkt-LgpfJWYXtC2ZEArk5j4yBSKF38xPGvKqrmLLuaJl4nGZRl_HDufYncL3pAnZnEBonK_GrjWZb_VRU5aFcZggEmbf5N0Z3a2TN6fFjV_C8wGdl6iz17G2zycIIowyWaCTzYxPZFGHSNAhZVe7P_P6nCLw"
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"content\": \"can't wait to meet u. Please work hard!\", \n  \"receiverUserId\": \"yd_RALUF_oqOnV3\",\n  \"chatId\": \"Eqj8tnBZw09JQi6\"\n}",
+                "form": []
+            }
+        },
+        {
+            "_id": "81cd6aed-74c0-471d-b9d3-b611a637c8fe",
+            "colId": "f044fc19-4c79-465d-adfb-8496b5147ccc",
+            "containerId": "",
+            "name": "my chats",
+            "url": "http://localhost:5000/api/chats",
+            "method": "GET",
+            "sortNum": 50000,
+            "created": "2024-10-09T20:52:05.368Z",
+            "modified": "2024-10-09T20:53:11.456Z",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJ5ZF9SQUxVRl9vcU9uVjMiLCJ0eXBlIjoiYXV0aCIsInRva2VuSWQiOm51bGwsImlhdCI6MTcyODUwNTI0MywiZXhwIjoxNzI4NTEyNDQzfQ.XC_-r6P3lDnT8pxJkqmFEQ9lTVf3Iuld5KEcw4J6B6Pypap1hqWgrgaOSKsdCXJGlval8F2-1K8BHt5fTWF0ODRrXVM8EEkRm0GwcXMJ-tAOmw6boIlOuOR4791AOxkOiJeMDkKcEU2IdUN0yj8xi16W3QFgFS3cyySZAvxMEAgs9MKiwe-p_e-2ZPLnMABYkklz2636uLhKCwHJGRmLSDvAIVVjraPnooR_uC8S9QjMrPQX57aFt923U3i1L5eVpSGkd8awNeHEd3WACdC4dqqHZaPG-RV6gBGS-j8Lmc5IG5T3_G_Xjaf4MikraFWLwjjkpSUGmNtlQFQNiKniqg"
+                }
+            ]
+        },
+        {
+            "_id": "3a1f394e-7d25-4146-8f62-b854dc1b9be7",
+            "colId": "f044fc19-4c79-465d-adfb-8496b5147ccc",
+            "containerId": "",
+            "name": "chat messages",
+            "url": "http://localhost:5000/api/chats/messages/-rDq-3AgV4a9cSJ",
+            "method": "GET",
+            "sortNum": 60000,
+            "created": "2024-10-09T20:53:55.977Z",
+            "modified": "2024-10-09T20:58:50.982Z",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJ5ZF9SQUxVRl9vcU9uVjMiLCJ0eXBlIjoiYXV0aCIsInRva2VuSWQiOm51bGwsImlhdCI6MTcyODUwNTI0MywiZXhwIjoxNzI4NTEyNDQzfQ.XC_-r6P3lDnT8pxJkqmFEQ9lTVf3Iuld5KEcw4J6B6Pypap1hqWgrgaOSKsdCXJGlval8F2-1K8BHt5fTWF0ODRrXVM8EEkRm0GwcXMJ-tAOmw6boIlOuOR4791AOxkOiJeMDkKcEU2IdUN0yj8xi16W3QFgFS3cyySZAvxMEAgs9MKiwe-p_e-2ZPLnMABYkklz2636uLhKCwHJGRmLSDvAIVVjraPnooR_uC8S9QjMrPQX57aFt923U3i1L5eVpSGkd8awNeHEd3WACdC4dqqHZaPG-RV6gBGS-j8Lmc5IG5T3_G_Xjaf4MikraFWLwjjkpSUGmNtlQFQNiKniqg"
+                }
+            ]
+        }
+    ],
+    "ref": "UB9v390z_pXLqkke4OGvEk6R7N8JSsBoU4Exh0i4XzITTLyz5tIUp5bSbMikaBlTlJ6mL4STT-oUNU_hegwyRA"
+}
