@@ -16,7 +16,7 @@ export const createServer = (): express.Express => {
   app.get("/api/test", (req, res) => {
     res.status(200).json({ message: "Hello World" });
   });
-  app.use("/api/user", UserRoutes);
+  app.use("/api/users", UserRoutes);
   app.use("/api/auth", AuthRoutes);
   app.use("/api/chats", ChatRoutes);
   app.use((err: any, req: Request, res: Response, next: NextFunction) => {

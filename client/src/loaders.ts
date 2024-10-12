@@ -3,7 +3,6 @@ import { getToken, setToken } from "@/lib/axios";
 import { redirect } from "react-router-dom";
 
 export const rootLoader = async () => {
-  console.log("root loader run");
   try {
     const token = getToken();
     if (!token) {

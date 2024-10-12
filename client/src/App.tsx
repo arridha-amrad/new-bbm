@@ -16,6 +16,7 @@ import Settings from "./pages/Settings";
 import { rootLoader } from "./loaders";
 import Box from "@mui/material/Box";
 import { CircularProgress } from "@mui/material";
+import EditProfile from "./components/EditProfile";
 
 const darkTheme = createTheme({
   palette: {
@@ -60,6 +61,10 @@ const router = createBrowserRouter([
           {
             path: "",
             Component: Banner,
+          },
+          {
+            path: "edit-profile",
+            Component: EditProfile,
           },
         ],
       },

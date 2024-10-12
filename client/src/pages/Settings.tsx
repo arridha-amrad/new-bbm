@@ -1,4 +1,4 @@
-import Chats from "@/components/Chats";
+import Account from "@/components/Account";
 import Search from "@/components/Search";
 import TabBar from "@/components/TabBar";
 import { Button } from "@mui/material";
@@ -25,7 +25,9 @@ export default function Settings() {
           </Stack>
           <Search />
           <Divider />
-          <Chats />
+          <Stack flex="1">
+            <Account />
+          </Stack>
           <Divider />
           <TabBar />
         </Stack>

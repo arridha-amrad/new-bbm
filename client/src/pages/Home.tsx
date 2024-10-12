@@ -1,18 +1,21 @@
 import Chats from "@/components/Chats";
 import Search from "@/components/Search";
 import TabBar from "@/components/TabBar";
+import User from "@/components/User";
+import { RootState } from "@/lib/redux/store";
 import { CreateOutlined } from "@mui/icons-material";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { Outlet, useLoaderData } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { Outlet } from "react-router-dom";
 
 export default function Home() {
-  const data = useLoaderData();
-  console.log({ data });
-
+  const { searchResult, searchActive } = useSelector(
+    (state: RootState) => state.user
+  );
   return (
     <>
       <Box height={"inherit"} flex="1">
@@ -31,7 +34,15 @@ export default function Home() {
           </Stack>
           <Search />
           <Divider />
-          <Chats />
+          {searchActive && searchResult.length > 0 ? (
+            <Stack flex="1" overflow={"auto"} direction={"column"}>
+              {searchResult.map((user) => (
+                <User key={user.id} user={user} />
+              ))}
+            </Stack>
+          ) : (
+            <Chats />
+          )}
           <Divider />
           <TabBar />
         </Stack>

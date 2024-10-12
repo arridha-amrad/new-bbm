@@ -13,8 +13,8 @@ export default function TabBar() {
   const pathname = location.pathname;
 
   const isContactPath = pathname === "/contacts";
-  const isChatPage = pathname === "/";
-  const isSettingsPage = pathname === "/settings";
+  const isChatPage = pathname === "/" || pathname.includes("/chat");
+  const isSettingsPage = pathname.includes("/settings");
 
   return (
     <Paper>

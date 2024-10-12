@@ -15,11 +15,7 @@ export const users = mysqlTable(
     username: varchar({ length: 50 }).unique().notNull(),
     email: varchar({ length: 100 }).unique().notNull(),
     password: text().notNull(),
-    imageURL: text()
-      .default(
-        "https://www.portmelbournefc.com.au/wp-content/uploads/2022/03/avatar-1.jpeg"
-      )
-      .notNull(),
+    imageURL: text(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
   },
