@@ -2,8 +2,8 @@ import "dotenv/config";
 
 import { createServer as serverInit } from "http";
 import { createServer } from "@/app";
-import { initSocket } from "./module/socket/socket.server";
 import { connectDb } from "@/lib/drizzle/db";
+import { initSocket } from "@/lib/socket-io/init";
 
 const port = 5000;
 

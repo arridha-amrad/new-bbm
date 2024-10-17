@@ -20,8 +20,8 @@ const initialState: AuthState = {
   isLoading: true,
 };
 
-export const userSlice = createSlice({
-  name: "user",
+export const authSlice = createSlice({
+  name: "auth",
   initialState,
   reducers: {
     setAuth: (state, action: PayloadAction<TUser>) => {
@@ -32,6 +32,6 @@ export const userSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { setAuth } = userSlice.actions;
+export const { setAuth } = authSlice.actions;
 
-export const authReducer = userSlice.reducer;
+export const authReducer = authSlice.reducer;

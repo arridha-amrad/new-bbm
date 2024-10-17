@@ -22,7 +22,7 @@ const initialState: AuthState = {
 };
 
 export const chatSlice = createSlice({
-  name: "user",
+  name: "chat",
   initialState,
   reducers: {
     setCurrChat: (state, action: PayloadAction<TChat>) => {

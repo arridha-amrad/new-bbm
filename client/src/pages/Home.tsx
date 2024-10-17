@@ -33,9 +33,13 @@ export default function Home() {
             </IconButton>
           </Stack>
           <Search />
-          <Divider />
           {searchActive && searchResult.length > 0 ? (
             <Stack flex="1" overflow={"auto"} direction={"column"}>
+              <Divider textAlign="left">
+                <Typography variant="subtitle2" color="textDisabled">
+                  Search Result
+                </Typography>
+              </Divider>
               {searchResult.map((user) => (
                 <User key={user.id} user={user} />
               ))}

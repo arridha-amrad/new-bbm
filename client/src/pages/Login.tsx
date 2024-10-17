@@ -23,7 +23,7 @@ import { setToken } from "@/lib/axios";
 
 export default function LoginPage() {
   const [isShowPassword, setIsShowPassword] = useState(false);
-  const [isError, setError] = useState(false);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
   const {
     register,
@@ -38,8 +38,9 @@ export default function LoginPage() {
       setToken(res.data.token);
       navigate("/");
     } catch (err: any) {
-      if (err.response.data.message) {
-        setError(true);
+      const errMessage = err.response.data.message;
+      if (errMessage) {
+        setError(errMessage);
       }
     }
   });
@@ -76,9 +77,9 @@ export default function LoginPage() {
           <Paper sx={{ padding: "3rem 2rem", borderRadius: "0.5rem" }}>
             <form onSubmit={onSubmit}>
               <Stack gap={4} direction="column">
-                {isError && (
-                  <Alert onClose={() => setError(false)} severity="error">
-                    This is an error Alert.
+                {!!error && (
+                  <Alert onClose={() => setError("")} severity="error">
+                    {error}
                   </Alert>
                 )}
                 <TextField
