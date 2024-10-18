@@ -8,7 +8,6 @@ function useClickOutside(
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (excludeRef && excludeRef.current) {
-        console.log("here");
         if (
           domNodeRef.current &&
           !domNodeRef.current.contains(event.target as Node) &&

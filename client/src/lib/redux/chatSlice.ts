@@ -1,13 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
+import { TMessage } from "./messageSlice";
 
 export type TChat = {
-  id: string;
-  chatId: string | null;
+  userId: string;
   username: string;
+  imageURL: string;
+  chatId: string | null;
   lastMessage: string;
   totalNotification: number;
-  imageURL: string;
   latestMessageDate: Date | null;
 };
 
@@ -35,8 +36,15 @@ export const chatSlice = createSlice({
       state.chats.unshift(action.payload);
       state.currChat = action.payload;
     },
+    updateChat: (state, action: PayloadAction<TMessage>) => {
+      const { sentAt, chatId, content } = action.payload;
+      const currChat = state.chats.find((c) => c.chatId === chatId);
+      if (!currChat) return;
+      currChat.lastMessage = content;
+      currChat.latestMessageDate = sentAt;
+    },
   },
 });
 
-export const { setChats, addChat, setCurrChat } = chatSlice.actions;
+export const { setChats, addChat, setCurrChat, updateChat } = chatSlice.actions;
 export const chatReducer = chatSlice.reducer;

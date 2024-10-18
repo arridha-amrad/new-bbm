@@ -13,7 +13,7 @@ import Home from "./pages/Home";
 import LoginPage from "./pages/Login";
 import RegisterPage from "./pages/Register";
 import Settings from "./pages/Settings";
-import { rootLoader } from "./loaders";
+import { homeLoader, rootLoader } from "./loaders";
 import Box from "@mui/material/Box";
 import { CircularProgress } from "@mui/material";
 import EditProfile from "./components/EditProfile";
@@ -33,6 +33,7 @@ const router = createBrowserRouter([
       {
         path: "",
         Component: Home,
+        loader: homeLoader,
         children: [
           {
             path: "",

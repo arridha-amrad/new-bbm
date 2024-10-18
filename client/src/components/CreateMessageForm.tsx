@@ -1,3 +1,8 @@
+import useClickOutside from "@/hooks/useClickOutside";
+import { useSocket } from "@/hooks/useSocket";
+import { RootState } from "@/lib/redux/store";
+import data from "@emoji-mart/data";
+import Picker from "@emoji-mart/react";
 import Add from "@mui/icons-material/Add";
 import EmojiEmotions from "@mui/icons-material/EmojiEmotions";
 import Send from "@mui/icons-material/Send";
@@ -5,20 +10,18 @@ import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import InputBase from "@mui/material/InputBase";
 import Stack from "@mui/material/Stack";
-import data from "@emoji-mart/data";
-import Picker from "@emoji-mart/react";
 import { FormEvent, useRef, useState } from "react";
-import useClickOutside from "@/hooks/useClickOutside";
-import { useDispatch } from "react-redux";
-import { useSearchParams } from "react-router-dom";
-import { addMessage } from "@/lib/redux/messageSlice";
+import { useSelector } from "react-redux";
 
 export default function CreateMessageForm() {
   const [text, setText] = useState<string>("");
   const [showPicker, setShowPicker] = useState<boolean>(false);
   const [cursorPosition, setCursorPosition] = useState<number>(0);
   const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement | null>(null);
-  const dispatch = useDispatch();
+  const { socket } = useSocket();
+
+  const { user } = useSelector((state: RootState) => state.auth);
+  const { currChat } = useSelector((state: RootState) => state.chat);
 
   const { domNodeRef: pickerRef } = useClickOutside(
     () => setShowPicker(false),
@@ -31,12 +34,8 @@ export default function CreateMessageForm() {
       const end = text.slice(cursorPosition);
       const newText = start + emoji.native + end;
       setText(newText);
-
-      // Update cursor position after inserting emoji
       const newCursorPosition = cursorPosition + emoji.native.length;
       setCursorPosition(newCursorPosition);
-
-      // Set selection range after text updates
       setTimeout(() => {
         if (inputRef.current) {
           inputRef.current.setSelectionRange(
@@ -64,15 +63,16 @@ export default function CreateMessageForm() {
     setCursorPosition(target.selectionStart ?? 0);
   };
 
-  const [_, setParam] = useSearchParams();
-
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    const params = {
-      chatId: "1100",
-    };
-    setParam(params);
-    console.log({ text });
+    socket?.emit("sendMessage", {
+      userId: user?.id,
+      text,
+      chatId: currChat?.chatId,
+      toUserId: currChat?.userId,
+      sentAt: new Date(),
+    });
+    setText("");
   };
 
   return (

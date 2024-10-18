@@ -1,11 +1,15 @@
+import { fetchMessages } from "@/api/chat";
 import { setCurrChat, TChat } from "@/lib/redux/chatSlice";
+import { setMessages } from "@/lib/redux/messageSlice";
 import { RootState } from "@/lib/redux/store";
+import { formatClock } from "@/utils";
 import { CardActionArea } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import Badge from "@mui/material/Badge";
 import Card from "@mui/material/Card";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
@@ -14,21 +18,30 @@ type Props = {
 };
 
 export default function Chat({ chat }: Props) {
+  const { currChat, chats } = useSelector((state: RootState) => state.chat);
+  const ref = useRef<HTMLButtonElement | null>(null);
+  useEffect(() => {
+    if (chats[0].chatId === chat.chatId) {
+      ref.current?.click();
+    }
+  }, []);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { currChat } = useSelector((state: RootState) => state.chat);
-  const clock = new Intl.DateTimeFormat("en-us", {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  }).format(new Date());
-  const setChat = () => {
+  const clock = formatClock(chat.latestMessageDate ?? new Date());
+  console.log({ clock, date: chat.latestMessageDate });
+
+  const setChat = async () => {
     navigate(`/chat?chatId=${chat.chatId}`);
     dispatch(setCurrChat(chat));
+    if (chat.chatId) {
+      const { data } = await fetchMessages(chat.chatId);
+      dispatch(setMessages(data));
+    }
   };
   return (
     <Card>
       <CardActionArea
+        ref={ref}
         onClick={setChat}
         sx={{
           px: 2,

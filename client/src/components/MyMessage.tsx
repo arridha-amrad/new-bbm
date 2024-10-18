@@ -1,17 +1,24 @@
+import { TMessage } from "@/lib/redux/messageSlice";
+import { formatClock } from "@/utils";
 import DoneAll from "@mui/icons-material/DoneAll";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
-export default function MyMessage() {
+interface Props {
+  message: TMessage;
+}
+
+export default function MyMessage({ message }: Props) {
+  const clock = formatClock(message.sentAt);
   return (
     <Stack alignSelf="end">
       <Container maxWidth="sm">
         <Stack gap={1} alignItems="end" direction="row">
           <Stack direction="column" gap={-0.5}>
             <Typography color="textDisabled" fontSize="0.7rem">
-              22:00
+              {clock}
             </Typography>
             <DoneAll color="disabled" sx={{ width: "1.2rem" }} />
           </Stack>
@@ -23,9 +30,7 @@ export default function MyMessage() {
             px={2}
             py={1}
           >
-            <Typography>
-              Lorem ipsum dolor sit, amet consectetur adipisicing elit
-            </Typography>
+            <Typography>{message.content}</Typography>
           </Box>
         </Stack>
       </Container>

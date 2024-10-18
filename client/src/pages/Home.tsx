@@ -2,6 +2,7 @@ import Chats from "@/components/Chats";
 import Search from "@/components/Search";
 import TabBar from "@/components/TabBar";
 import User from "@/components/User";
+import { setChats } from "@/lib/redux/chatSlice";
 import { RootState } from "@/lib/redux/store";
 import { CreateOutlined } from "@mui/icons-material";
 import Box from "@mui/material/Box";
@@ -9,13 +10,27 @@ import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { useSelector } from "react-redux";
-import { Outlet } from "react-router-dom";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Outlet, useLoaderData } from "react-router-dom";
 
 export default function Home() {
   const { searchResult, searchActive } = useSelector(
     (state: RootState) => state.user
   );
+  const dispatch = useDispatch();
+  const data = useLoaderData() as any;
+
+  useEffect(() => {
+    dispatch(
+      setChats(
+        data.map((d: any) => ({
+          ...d,
+          totalNotification: 0,
+        }))
+      )
+    );
+  }, []);
   return (
     <>
       <Box height={"inherit"} flex="1">

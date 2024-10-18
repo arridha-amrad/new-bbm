@@ -15,7 +15,7 @@ export default function Chats() {
         </Typography>
       </Divider>
       {chats.map((chat) => (
-        <Chat chat={chat} key={chat.id} />
+        <Chat chat={chat} key={chat.userId} />
       ))}
     </Stack>
   );
