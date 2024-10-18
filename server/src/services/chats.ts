@@ -1,22 +1,37 @@
 import db from "@/lib/drizzle/db";
 import { chats, messages, participants, users } from "@/lib/drizzle/schema";
-import { aliasedTable, and, eq, ne } from "drizzle-orm";
+import { aliasedTable, and, eq, ne, sql } from "drizzle-orm";
 
 export const findChats = async (userId: string) => {
   const p = aliasedTable(participants, "p");
-  const r2 = await db
+  const query = await db
     .select({
-      chatId: chats.id,
-      chatName: chats.name,
-      receiverId: users.id,
-      receiverUsername: users.username,
+      userId: p.userId,
+      username: users.username,
+      imageURL: users.imageURL,
+      chatId: p.chatId,
+      lastMessage: messages.content,
+      latestMessageDate: messages.sentAt,
     })
     .from(participants)
-    .leftJoin(p, and(eq(p.chatId, participants.chatId), ne(p.userId, userId)))
-    .leftJoin(chats, eq(chats.id, participants.chatId))
-    .leftJoin(users, eq(users.id, p.userId))
+    .innerJoin(p, and(eq(participants.chatId, p.chatId), ne(p.userId, userId)))
+    .innerJoin(users, eq(users.id, p.userId))
+    .leftJoin(
+      messages,
+      sql`
+          ${messages.chatId} = ${p.chatId}
+          AND ${messages.id} = (
+            SELECT ${messages.id}
+            FROM ${messages}
+            WHERE ${messages.chatId} = ${p.chatId}
+            ORDER BY ${messages.sentAt} DESC
+            LIMIT 1
+          )   
+        `
+    )
     .where(eq(participants.userId, userId));
-  return r2;
+
+  return query;
 };
 
 export const findMessages = async (chatId: string) => {
@@ -37,10 +52,16 @@ export const newParticipants = async (data: InsertParticipants[]) => {
 };
 
 export const saveMessage = async (data: typeof messages.$inferInsert) => {
-  const [result] = await db.insert(messages).values(data).$returningId();
+  const [result] = await db
+    .insert(messages)
+    .values({ ...data, sentAt: new Date() })
+    .$returningId();
   const [message] = await db
     .select()
     .from(messages)
     .where(eq(messages.id, result.id));
+
+  console.log({ message });
+
   return message;
 };

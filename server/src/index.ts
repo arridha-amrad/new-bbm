@@ -11,6 +11,7 @@ const startServer = async (): Promise<void> => {
   const app = createServer();
   const httpServer = serverInit(app);
   initSocket(httpServer);
+  httpServer.listen(port);
   await connectDb();
 };
 

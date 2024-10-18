@@ -9,6 +9,8 @@ import {
   SocketUser,
   StoredSocketUser,
 } from "./types";
+import { newChat, newParticipants, saveMessage } from "@/services/chats";
+import { nanoid } from "nanoid";
 
 let users: StoredSocketUser[] = [];
 
@@ -47,15 +49,34 @@ export const initSocket = (
   io.on("connection", (socket) => {
     socket.on("addUser", (data: SocketUser) => {
       add({ ...data, socketId: socket.id });
-      console.log("after adding user : ", users);
+      console.log({ users });
     });
-    socket.on("sendMessage", (data: SendMessage) => {
-      const toSocketId = findSocketId(data.toId);
-      if (toSocketId !== undefined) {
-        io.to(toSocketId).emit("receiveMessage", {
-          message: data.message,
-          sender: data.sender,
-        });
+    socket.on("sendMessage", async (data: SendMessage) => {
+      let newChatId = data.chatId;
+      if (!newChatId) {
+        newChatId = nanoid(15);
+        await newChat({ id: newChatId });
+        await newParticipants([
+          {
+            chatId: newChatId,
+            userId: data.userId,
+          },
+          {
+            chatId: newChatId,
+            userId: data.toUserId,
+          },
+        ]);
+      }
+      const newMessage = await saveMessage({
+        chatId: newChatId,
+        content: data.text,
+        userId: data.userId,
+      });
+      const toSocketId = findSocketId(data.toUserId);
+      console.log({ toSocketId });
+      if (toSocketId) {
+        console.log("execute");
+        io.to([toSocketId, socket.id]).emit("receiveMessage", newMessage);
       }
     });
     socket.on("typing", (data) => {
@@ -66,7 +87,8 @@ export const initSocket = (
     });
     socket.on("disconnect", () => {
       removeUser(socket.id);
-      console.log("users : ", users);
+      console.log("disconnect");
+      console.log({ users });
     });
   });
 };

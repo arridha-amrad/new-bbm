@@ -29,6 +29,5 @@ export const createServer = (): express.Express => {
     console.error(err);
     res.status(500).send("Something broke!");
   });
-  app.listen(5000);
   return app;
 };

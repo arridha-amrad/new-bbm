@@ -7,7 +7,7 @@ export interface ServerToClientEvents {
   noArg: () => void;
   basicEmit: (a: number, b: string, c: Buffer) => void;
   withAck: (d: string, callback: (e: number) => void) => void;
-  receiveMessage: (data: ReceiveMessage) => void;
+  receiveMessage: (data: typeof messages.$inferSelect) => void;
   typingAlert: (data: Typing) => void;
 }
 
@@ -38,9 +38,11 @@ export interface SocketUser {
 }
 
 export interface SendMessage {
-  message: Message;
-  toId: string;
-  sender: Sender;
+  userId: string;
+  text: string;
+  chatId: string | null;
+  toUserId: string;
+  sentAt: Date;
 }
 
 export type ReceiveMessage = Omit<SendMessage, "toId">;

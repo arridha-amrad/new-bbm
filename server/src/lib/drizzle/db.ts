@@ -7,6 +7,7 @@ const pool = mysql.createPool({
   user: "root",
   port: 3306,
   database: "messenger",
+  timezone: "Z",
 });
 
 export const connectDb = async () => {
