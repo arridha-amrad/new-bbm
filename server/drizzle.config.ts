@@ -1,16 +1,11 @@
 import "dotenv/config";
-import type { Config } from "drizzle-kit";
+import { defineConfig } from "drizzle-kit";
 
-export default {
+export default defineConfig({
+  out: "./drizzle",
   schema: "./src/lib/drizzle/schema.ts",
-  out: "./src/lib/drizzle/migrations",
-  dialect: "mysql",
+  dialect: "sqlite",
   dbCredentials: {
-    host: "localhost",
-    user: "root",
-    port: 3306,
-    database: "messenger",
+    url: process.env.DB_FILE_NAME!,
   },
-  strict: true,
-  verbose: true,
-} satisfies Config;
+});

@@ -2,7 +2,11 @@ import { createToken, verifyToken } from "@/lib/jwt";
 import { options } from "@/lib/noders-argon";
 import { removeToken, saveToken } from "@/services/token";
 import { findUserByEmailOrUsername } from "@/services/user";
-import { getRefreshTokenFromCookie, setCookieOptions } from "@/utils/cookies";
+import {
+  getRefreshTokenFromCookie,
+  cookieOptions,
+  REFRESH_TOKEN,
+} from "@/utils/cookies";
 import { CustomError, ValidationError } from "@/utils/CustomError";
 import { validateLogin } from "@/validators/auth";
 import { verify } from "@node-rs/argon2";
@@ -51,7 +55,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     await saveToken({ userId: user.id, value: refreshToken, id: tokenId });
     // eslint-disable-next-line
     const { password: pwd, ...props } = user;
-    res.cookie("token", `Bearer ${refreshToken}`, setCookieOptions);
+    res.cookie(REFRESH_TOKEN, `Bearer ${refreshToken}`, cookieOptions);
     res.status(200).json({
       token: `Bearer ${authToken}`,
       user: props,

@@ -2,7 +2,7 @@ import { createToken } from "@/lib/jwt";
 import { options } from "@/lib/noders-argon";
 import { saveToken } from "@/services/token";
 import { createUser, findUserByEmailOrUsername } from "@/services/user";
-import { setCookieOptions } from "@/utils/cookies";
+import { cookieOptions, REFRESH_TOKEN } from "@/utils/cookies";
 import { CustomError, ValidationError } from "@/utils/CustomError";
 import { validateRegistration } from "@/validators/auth";
 import { hash } from "@node-rs/argon2";
@@ -29,31 +29,31 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
       throw new CustomError("Username already registered", 400);
     }
     const hashedPassword = await hash(password, options);
-    const data = {
-      id: nanoid(15),
+
+    const { id } = await createUser({
       email,
       password: hashedPassword,
       username,
-    };
-    await createUser(data);
-    const tokenId = nanoid(15);
-    const authToken = await createToken({
-      type: "auth",
-      userId: data.id,
     });
-    const refToken = await createToken({
+
+    const tokenId = nanoid(15);
+    const newAccessToken = await createToken({
+      type: "auth",
+      userId: id,
+    });
+    const newRefreshToken = await createToken({
       type: "refresh",
-      userId: data.id,
+      userId: id,
       tokenId,
     });
-    await saveToken({ userId: data.id, value: refToken, id: tokenId });
-    res
-      .status(201)
-      .cookie("token", `Bearer ${refToken}`, setCookieOptions)
-      .json({
-        token: `Bearer ${authToken}`,
-      });
-    return;
+
+    await saveToken({ userId: id, value: newRefreshToken, id: tokenId });
+
+    res.cookie(REFRESH_TOKEN, `Bearer ${newRefreshToken}`, cookieOptions);
+
+    res.status(201).json({
+      token: `Bearer ${newAccessToken}`,
+    });
   } catch (err) {
     next(err);
   }

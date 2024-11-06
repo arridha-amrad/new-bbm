@@ -13,13 +13,29 @@ export const findUserByEmailOrUsername = async (query: string) => {
 };
 
 export const createUser = async (data: typeof users.$inferInsert) => {
-  const result = await db.insert(users).values(data).$returningId();
+  const [result] = await db.insert(users).values(data).returning();
   return result;
 };
 
 export const findUserById = async (userId: string) => {
   const [user] = await db.select().from(users).where(eq(users.id, userId));
   return user;
+};
+
+export const updateUser = async (
+  userId: string,
+  username: string,
+  imageURL: string | null
+) => {
+  const [result] = await db
+    .update(users)
+    .set({
+      username,
+      imageURL,
+    })
+    .where(eq(users.id, userId))
+    .returning();
+  return result;
 };
 
 export const searchUsers = async (searchKey: string) => {

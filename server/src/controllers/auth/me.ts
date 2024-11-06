@@ -15,7 +15,6 @@ const me = async (req: Request, res: Response, next: NextFunction) => {
     // eslint-disable-next-line
     const { password, ...props } = user;
     res.status(200).json({ user: props });
-    return;
   } catch (err) {
     next(err);
   }

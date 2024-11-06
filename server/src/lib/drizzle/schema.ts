@@ -1,62 +1,74 @@
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
   index,
-  int,
-  mysqlTable,
+  sqliteTable,
   primaryKey,
   text,
-  timestamp,
-  varchar,
-} from "drizzle-orm/mysql-core";
-export const users = mysqlTable(
+  integer,
+} from "drizzle-orm/sqlite-core";
+import { nanoid } from "nanoid";
+
+export const users = sqliteTable(
   "users",
   {
-    id: varchar("id", { length: 15 }).primaryKey(),
-    username: varchar({ length: 50 }).unique().notNull(),
-    email: varchar({ length: 100 }).unique().notNull(),
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => nanoid(15)),
+    username: text({ length: 50 }).unique().notNull(),
+    email: text({ length: 100 }).unique().notNull(),
     password: text().notNull(),
     imageURL: text(),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+    createdAt: text("created_at").default(sql`(CURRENT_TIMESTAMP)`),
+    updatedAt: text("updated_at")
+      .default(sql`(CURRENT_TIMESTAMP)`)
+      .$onUpdate(() => new Date().toISOString()),
   },
   (table) => ({
     uniqueUsername: index("index-username").on(table.username),
     uniqueEmail: index("index-email").on(table.email),
   })
 );
+
 export const userRelations = relations(users, ({ many }) => ({
   tokens: many(tokens),
   messages: many(messages),
 }));
-export const tokens = mysqlTable("tokens", {
-  id: varchar("id", { length: 15 }).primaryKey(),
+
+export const tokens = sqliteTable("tokens", {
+  id: text("id").primaryKey(),
   value: text().notNull(),
-  userId: varchar("user_id", { length: 15 })
+  userId: text("user_id")
     .notNull()
     .references(() => users.id),
 });
+
 export const tokenRelations = relations(tokens, ({ one }) => ({
   user: one(users, {
     fields: [tokens.userId],
     references: [users.id],
   }),
 }));
-export const chats = mysqlTable("chats", {
-  id: varchar("id", { length: 15 }).primaryKey(),
-  name: varchar("name", { length: 100 }),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
+
+export const chats = sqliteTable("chats", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => nanoid(15)),
+  name: text("name", { length: 100 }),
+  createdAt: text("created_at").default(sql`(CURRENT_TIMESTAMP)`),
 });
-export const messages = mysqlTable("messages", {
-  id: int().primaryKey().autoincrement(),
+
+export const messages = sqliteTable("messages", {
+  id: integer({ mode: "number" }).primaryKey({ autoIncrement: true }),
   content: text().notNull(),
-  sentAt: timestamp("sent_at").defaultNow().notNull(),
-  chatId: varchar("chat_id", { length: 15 })
+  sentAt: text("sent_at").default(sql`(CURRENT_TIMESTAMP)`),
+  chatId: text("chat_id")
     .notNull()
     .references(() => chats.id),
-  userId: varchar("user_id", { length: 15 })
+  userId: text("user_id")
     .notNull()
     .references(() => users.id),
 });
+
 export const messageRelations = relations(messages, ({ one }) => ({
   chat: one(chats, {
     fields: [messages.chatId],
@@ -67,13 +79,14 @@ export const messageRelations = relations(messages, ({ one }) => ({
     references: [users.id],
   }),
 }));
-export const participants = mysqlTable(
+
+export const participants = sqliteTable(
   "participants",
   {
-    chatId: varchar("chat_id", { length: 15 })
+    chatId: text("chat_id")
       .notNull()
       .references(() => chats.id),
-    userId: varchar("user_id", { length: 15 })
+    userId: text("user_id")
       .notNull()
       .references(() => users.id),
   },
@@ -81,6 +94,7 @@ export const participants = mysqlTable(
     pk: primaryKey({ columns: [table.chatId, table.userId] }),
   })
 );
+
 export const participantRelation = relations(participants, ({ one }) => ({
   chat: one(chats, {
     fields: [participants.chatId],

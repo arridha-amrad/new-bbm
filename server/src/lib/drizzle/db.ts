@@ -1,27 +1,20 @@
-import { drizzle } from "drizzle-orm/mysql2";
-import mysql from "mysql2/promise";
-import * as schema from "./schema";
+import "dotenv/config";
 
-const pool = mysql.createPool({
-  host: "localhost",
-  user: "root",
-  port: 3306,
-  database: "messenger",
-  timezone: "Z",
-});
+import { drizzle } from "drizzle-orm/libsql";
+import { createClient } from "@libsql/client";
+import { sql } from "drizzle-orm";
+
+const client = createClient({ url: process.env.DB_FILE_NAME! });
+
+const db = drizzle({ client });
 
 export const connectDb = async () => {
   try {
-    await pool.getConnection();
-    console.log("🔥 Connected to mysql through drizzle-orm pool connection 🔥");
+    await db.run(sql`SELECT 1`);
+    console.log("db connection ok");
   } catch (err) {
-    throw err;
+    console.log("db connection error");
   }
 };
-
-const db = drizzle(pool, {
-  schema,
-  mode: "default",
-});
 
 export default db;

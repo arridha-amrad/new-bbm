@@ -6,7 +6,11 @@ import {
   saveToken,
 } from "@/services/token";
 import { findUserById } from "@/services/user";
-import { getRefreshTokenFromCookie, setCookieOptions } from "@/utils/cookies";
+import {
+  getRefreshTokenFromCookie,
+  cookieOptions,
+  REFRESH_TOKEN,
+} from "@/utils/cookies";
 import { CustomError } from "@/utils/CustomError";
 import { NextFunction, Request, Response } from "express";
 import { nanoid } from "nanoid";
@@ -41,7 +45,7 @@ export default async (req: Request, res: Response, next: NextFunction) => {
       userId: user.id,
       tokenId: newTokenId,
     });
-    const newAuthToken = await createToken({
+    const newAccessToken = await createToken({
       type: "auth",
       userId: user.id,
     });
@@ -50,10 +54,8 @@ export default async (req: Request, res: Response, next: NextFunction) => {
       value: newRefreshToken,
       id: newTokenId,
     });
-    res
-      .status(200)
-      .cookie("token", `Bearer ${newRefreshToken}`, setCookieOptions)
-      .json({ token: `Bearer ${newAuthToken}` });
+    res.cookie(REFRESH_TOKEN, `Bearer ${newRefreshToken}`, cookieOptions);
+    res.status(200).json({ token: `Bearer ${newAccessToken}` });
   } catch (err) {
     next(err);
   }

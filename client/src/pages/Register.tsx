@@ -28,16 +28,19 @@ export default function RegisterPage() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isLoading },
   } = useForm<TRegister>({
     resolver: zodResolver(registerSchema),
   });
   const onSubmit = handleSubmit(async (data) => {
     try {
       const res = await registerApi(data);
-      setToken(res.data.token);
-      navigate("/");
+      if (res.status < 400) {
+        setToken(res.data.token);
+        navigate("/");
+      }
     } catch (err: any) {
+      console.log(err);
       const errMessage = err.response.data.message;
       if (errMessage) {
         setError(errMessage);
@@ -88,6 +91,7 @@ export default function RegisterPage() {
                   fullWidth
                   variant="outlined"
                   type="email"
+                  disabled={isLoading}
                   {...register("email")}
                   error={!!errors.email}
                   helperText={errors.email?.message}
@@ -96,6 +100,7 @@ export default function RegisterPage() {
                   id="register-username"
                   label="Username"
                   fullWidth
+                  disabled={isLoading}
                   variant="outlined"
                   error={!!errors.username}
                   helperText={errors.username?.message}
@@ -106,6 +111,7 @@ export default function RegisterPage() {
                     id="register-password"
                     label="Password"
                     fullWidth
+                    disabled={isLoading}
                     variant="outlined"
                     type={isShowPassword ? "text" : "password"}
                     error={!!errors.password}
@@ -125,7 +131,7 @@ export default function RegisterPage() {
                     />
                   </FormGroup>
                 </Box>
-                <Button type="submit" variant="contained">
+                <Button disabled={isLoading} type="submit" variant="contained">
                   Register
                 </Button>
                 <Box display="flex" justifyContent="center" gap={1}>

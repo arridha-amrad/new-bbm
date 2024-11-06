@@ -1,3 +1,4 @@
+import { TEditProfile } from "@/validation/user";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
@@ -28,10 +29,18 @@ export const authSlice = createSlice({
       state.user = action.payload;
       state.isLoading = false;
     },
+    updateAuth: (state, action: PayloadAction<TEditProfile>) => {
+      const user = state.user;
+      const { imageURL, username } = action.payload;
+      if (user) {
+        user.username = username;
+        user.imageURL = imageURL ?? "";
+      }
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { setAuth } = authSlice.actions;
+export const { setAuth, updateAuth } = authSlice.actions;
 
 export const authReducer = authSlice.reducer;

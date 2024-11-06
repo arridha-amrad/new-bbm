@@ -28,16 +28,20 @@ export default function LoginPage() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isLoading },
   } = useForm<TLogin>({
     resolver: zodResolver(loginSchema),
   });
+
   const onSubmit = handleSubmit(async (data) => {
     try {
       const res = await loginApi(data);
-      setToken(res.data.token);
-      navigate("/");
+      if (res.status < 400) {
+        setToken(res.data.token);
+        navigate("/");
+      }
     } catch (err: any) {
+      console.log(err);
       const errMessage = err.response.data.message;
       if (errMessage) {
         setError(errMessage);
@@ -86,6 +90,7 @@ export default function LoginPage() {
                   id="login-identity"
                   label="Email or username"
                   fullWidth
+                  disabled={isLoading}
                   variant="outlined"
                   {...register("identity")}
                   error={!!errors.identity}
@@ -96,6 +101,7 @@ export default function LoginPage() {
                     id="login-password"
                     label="Password"
                     fullWidth
+                    disabled={isLoading}
                     variant="outlined"
                     type={isShowPassword ? "text" : "password"}
                     {...register("password")}
@@ -115,7 +121,7 @@ export default function LoginPage() {
                     />
                   </FormGroup>
                 </Box>
-                <Button type="submit" variant="contained">
+                <Button disabled={isLoading} type="submit" variant="contained">
                   Login
                 </Button>
                 <Box display="flex" justifyContent="center" gap={1}>
