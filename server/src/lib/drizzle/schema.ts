@@ -18,9 +18,9 @@ export const users = sqliteTable(
     email: text({ length: 100 }).unique().notNull(),
     password: text().notNull(),
     imageURL: text(),
-    createdAt: text("created_at").default(sql`(CURRENT_TIMESTAMP)`),
+    createdAt: text("created_at").$defaultFn(() => new Date().toISOString()),
     updatedAt: text("updated_at")
-      .default(sql`(CURRENT_TIMESTAMP)`)
+      .$defaultFn(() => new Date().toISOString())
       .$onUpdate(() => new Date().toISOString()),
   },
   (table) => ({
@@ -54,13 +54,13 @@ export const chats = sqliteTable("chats", {
     .primaryKey()
     .$defaultFn(() => nanoid(15)),
   name: text("name", { length: 100 }),
-  createdAt: text("created_at").default(sql`(CURRENT_TIMESTAMP)`),
+  createdAt: text("created_at").$defaultFn(() => new Date().toISOString()),
 });
 
 export const messages = sqliteTable("messages", {
   id: integer({ mode: "number" }).primaryKey({ autoIncrement: true }),
   content: text().notNull(),
-  sentAt: text("sent_at").default(sql`(CURRENT_TIMESTAMP)`),
+  sentAt: text("sent_at").$defaultFn(() => new Date().toISOString()),
   chatId: text("chat_id")
     .notNull()
     .references(() => chats.id),

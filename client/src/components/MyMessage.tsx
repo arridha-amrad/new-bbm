@@ -1,5 +1,5 @@
 import { TMessage } from "@/lib/redux/messageSlice";
-import { formatClock } from "@/utils";
+import { formatClock } from "@/helpers/formatClock";
 import DoneAll from "@mui/icons-material/DoneAll";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";

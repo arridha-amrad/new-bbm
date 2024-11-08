@@ -1,6 +1,6 @@
 import useClickOutside from "@/hooks/useClickOutside";
-import { useSocket } from "@/hooks/useSocket";
 import { RootState } from "@/lib/redux/store";
+import { getSocket } from "@/lib/socket";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import Add from "@mui/icons-material/Add";
@@ -18,7 +18,6 @@ export default function CreateMessageForm() {
   const [showPicker, setShowPicker] = useState<boolean>(false);
   const [cursorPosition, setCursorPosition] = useState<number>(0);
   const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement | null>(null);
-  const { socket } = useSocket();
 
   const { user } = useSelector((state: RootState) => state.auth);
   const { currChat } = useSelector((state: RootState) => state.chat);
@@ -65,6 +64,7 @@ export default function CreateMessageForm() {
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
+    const socket = getSocket();
     socket?.emit("sendMessage", {
       userId: user?.id,
       text,

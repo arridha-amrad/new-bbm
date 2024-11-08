@@ -9,14 +9,9 @@ export default function ChatUser() {
   return (
     <Stack alignItems={"center"} direction={"row"} gap={1} py={1} px={2}>
       <Avatar src={currChat?.imageURL} />
-      <Stack>
+      <Stack direction={"column"} justifyContent={"center"}>
         <Typography fontWeight={"700"}>{currChat?.username}</Typography>
-        <Typography
-          lineHeight={0.9}
-          variant="body2"
-          color="textDisabled"
-          fontStyle={"italic"}
-        >
+        <Typography variant="body2" color="textDisabled" fontStyle={"italic"}>
           Last seen 22:00
         </Typography>
       </Stack>

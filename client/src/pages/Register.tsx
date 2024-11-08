@@ -23,7 +23,7 @@ import { registerApi } from "@/api/auth";
 
 export default function RegisterPage() {
   const [isShowPassword, setIsShowPassword] = useState(false);
-  const [isError, setError] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
   const {
     register,
@@ -40,7 +40,6 @@ export default function RegisterPage() {
         navigate("/");
       }
     } catch (err: any) {
-      console.log(err);
       const errMessage = err.response.data.message;
       if (errMessage) {
         setError(errMessage);
@@ -80,9 +79,9 @@ export default function RegisterPage() {
           <Paper sx={{ padding: "3rem 2rem", borderRadius: "0.5rem" }}>
             <form onSubmit={onSubmit}>
               <Stack gap={4} direction="column">
-                {!!isError && (
+                {!!error && (
                   <Alert onClose={() => setError("")} severity="error">
-                    This is an error Alert.
+                    {error}
                   </Alert>
                 )}
                 <TextField

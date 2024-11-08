@@ -73,9 +73,7 @@ export const initSocket = (
         userId: data.userId,
       });
       const toSocketId = findSocketId(data.toUserId);
-      console.log({ toSocketId });
       if (toSocketId) {
-        console.log("execute");
         io.to([toSocketId, socket.id]).emit("receiveMessage", newMessage);
       }
     });

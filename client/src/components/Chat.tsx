@@ -2,7 +2,7 @@ import { fetchMessages } from "@/api/chat";
 import { setCurrChat, TChat } from "@/lib/redux/chatSlice";
 import { setMessages } from "@/lib/redux/messageSlice";
 import { RootState } from "@/lib/redux/store";
-import { formatClock } from "@/utils";
+import { formatClock } from "@/helpers/formatClock";
 import { CardActionArea } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import Badge from "@mui/material/Badge";
@@ -28,7 +28,6 @@ export default function Chat({ chat }: Props) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const clock = formatClock(chat.latestMessageDate ?? new Date());
-  console.log({ clock, date: chat.latestMessageDate });
 
   const setChat = async () => {
     navigate(`/chat?chatId=${chat.chatId}`);

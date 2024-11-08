@@ -1,36 +1,21 @@
-import {
-  createContext,
-  Dispatch,
-  ReactNode,
-  SetStateAction,
-  useContext,
-  useState,
-} from "react";
-import { Socket } from "socket.io-client";
-
-interface Context {
-  socket: Socket | null;
-  setSocket: Dispatch<SetStateAction<Socket | null>>;
-}
-
-export const SocketContext = createContext<Context>({
-  setSocket: () => {},
-  socket: null,
-});
-
-export const SocketProvider = ({ children }: { children: ReactNode }) => {
-  const [socket, setSocket] = useState<Socket | null>(null);
-  return (
-    <SocketContext.Provider value={{ setSocket, socket }}>
-      {children}
-    </SocketContext.Provider>
-  );
-};
+import { updateChat } from "@/lib/redux/chatSlice";
+import { addMessage } from "@/lib/redux/messageSlice";
+import { setSocket } from "@/lib/socket";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { io } from "socket.io-client";
 
 export const useSocket = () => {
-  const socket = useContext(SocketContext);
-  if (!socket) {
-    throw new Error("Please wrap your app inside SocketProvider");
-  }
-  return socket;
+  const dispatch = useDispatch();
+  useEffect(() => {
+    const socket = io(import.meta.env.VITE_SERVER_URL);
+    setSocket(socket);
+    socket.on("receiveMessage", (message) => {
+      dispatch(addMessage(message));
+      dispatch(updateChat(message));
+    });
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
 };

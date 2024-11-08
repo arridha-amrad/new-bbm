@@ -52,16 +52,6 @@ export const newParticipants = async (data: InsertParticipants[]) => {
 };
 
 export const saveMessage = async (data: typeof messages.$inferInsert) => {
-  const [result] = await db
-    .insert(messages)
-    .values({ ...data, sentAt: new Date() })
-    .$returningId();
-  const [message] = await db
-    .select()
-    .from(messages)
-    .where(eq(messages.id, result.id));
-
-  console.log({ message });
-
-  return message;
+  const [result] = await db.insert(messages).values(data).returning();
+  return result;
 };

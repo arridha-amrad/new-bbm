@@ -1,5 +1,5 @@
 import { TMessage } from "@/lib/redux/messageSlice";
-import { formatClock } from "@/utils";
+import { formatClock } from "@/helpers/formatClock";
 import EmojiEmotions from "@mui/icons-material/EmojiEmotions";
 import { Container, IconButton } from "@mui/material";
 import Box from "@mui/material/Box";

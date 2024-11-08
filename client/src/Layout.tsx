@@ -4,16 +4,26 @@ import Stack from "@mui/material/Stack";
 import { Outlet, useLoaderData } from "react-router-dom";
 import { setAuth, TUser } from "./lib/redux/authSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { RootState } from "./lib/redux/store";
+import { getSocket } from "./lib/socket";
 
 export default function Layout() {
   const data = useLoaderData() as TUser;
   const dispatch = useDispatch();
   const { isLoading } = useSelector((state: RootState) => state.auth);
+  const socket = getSocket();
+  const ref = useRef(true);
 
   useEffect(() => {
-    dispatch(setAuth(data));
+    if (data && ref.current) {
+      socket?.emit("addUser", {
+        username: data.username,
+        userId: data.id,
+      });
+      ref.current = false;
+      dispatch(setAuth(data));
+    }
   }, []);
 
   return (

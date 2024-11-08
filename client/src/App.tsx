@@ -17,6 +17,7 @@ import { homeLoader, rootLoader } from "./loaders";
 import Box from "@mui/material/Box";
 import { CircularProgress } from "@mui/material";
 import EditProfile from "./components/EditProfile";
+import { useSocket } from "./hooks/useSocket";
 
 const darkTheme = createTheme({
   palette: {
@@ -82,6 +83,7 @@ const router = createBrowserRouter([
 ]);
 
 export default function App() {
+  useSocket();
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />

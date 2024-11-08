@@ -8,6 +8,13 @@
       "when": 1730876857639,
       "tag": "0000_wide_cobalt_man",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1731057684433,
+      "tag": "0001_strong_juggernaut",
+      "breakpoints": true
     }
   ]
 }
