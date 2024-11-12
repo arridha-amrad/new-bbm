@@ -1,3 +1,4 @@
+import { sendMessage } from "@/api/chat";
 import useClickOutside from "@/hooks/useClickOutside";
 import { RootState } from "@/lib/redux/store";
 import { getSocket } from "@/lib/socket";
@@ -62,16 +63,27 @@ export default function CreateMessageForm() {
     setCursorPosition(target.selectionStart ?? 0);
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    const socket = getSocket();
-    socket?.emit("sendMessage", {
-      userId: user?.id,
-      text,
-      chatId: currChat?.chatId,
-      toUserId: currChat?.userId,
-      sentAt: new Date(),
-    });
+    if (!currChat) return;
+    try {
+      const { data } = await sendMessage({
+        chatId: currChat?.chatId,
+        chatName: currChat.chatName,
+        content: text,
+        receiverUserId: currChat.userId,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+    // const socket = getSocket();
+    // socket?.emit("sendMessage", {
+    //   userId: user?.id,
+    //   text,
+    //   chatId: currChat?.chatId,
+    //   toUserId: currChat?.userId,
+    //   sentAt: new Date(),
+    // });
     setText("");
   };
 

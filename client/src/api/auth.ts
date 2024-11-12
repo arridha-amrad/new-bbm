@@ -1,5 +1,5 @@
 import { privateAxios, publicAxios } from "@/lib/axios";
-import { TLogin, TRegister } from "@/validation/auth";
+import { TLogin, TRegister } from "@/validators/auth";
 
 export const refreshTokenApi = async () => {
   return publicAxios.get("/auth/refresh-token");

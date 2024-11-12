@@ -1,5 +1,5 @@
 import { privateAxios, publicAxios } from "@/lib/axios";
-import { TEditProfile } from "@/validation/user";
+import { TEditProfile } from "@/validators/user";
 
 export const searchUserApi = async (key: string) => {
   return publicAxios.get(`/users/search?key=${key}`);

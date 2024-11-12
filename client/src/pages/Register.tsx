@@ -17,7 +17,7 @@ import Logo from "@/assets/bb.svg";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { registerSchema, TRegister } from "@/validation/auth";
+import { registerSchema, TRegister } from "@/validators/auth";
 import { setToken } from "@/lib/axios";
 import { registerApi } from "@/api/auth";
 

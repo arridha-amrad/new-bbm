@@ -1,7 +1,7 @@
 import { editProfileApi } from "@/api/user";
 import { updateAuth } from "@/lib/redux/authSlice";
 import { RootState } from "@/lib/redux/store";
-import { TEditProfile, editProfileSchema } from "@/validation/user";
+import { TEditProfile, editProfileSchema } from "@/validators/user";
 import { zodResolver } from "@hookform/resolvers/zod";
 import ChevronLeft from "@mui/icons-material/ChevronLeft";
 import { Container, Snackbar, TextField } from "@mui/material";

@@ -18,6 +18,7 @@ const User = ({ user }: Props) => {
     dispatch(
       addChat({
         ...user,
+        chatName: null,
         userId: user.id,
         lastMessage: "",
         chatId: null,

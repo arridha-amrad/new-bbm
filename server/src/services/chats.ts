@@ -10,12 +10,14 @@ export const findChats = async (userId: string) => {
       username: users.username,
       imageURL: users.imageURL,
       chatId: p.chatId,
+      chatName: chats.name,
       lastMessage: messages.content,
       latestMessageDate: messages.sentAt,
     })
     .from(participants)
     .innerJoin(p, and(eq(participants.chatId, p.chatId), ne(p.userId, userId)))
     .innerJoin(users, eq(users.id, p.userId))
+    .innerJoin(chats, eq(chats.id, participants.chatId))
     .leftJoin(
       messages,
       sql`
@@ -42,8 +44,9 @@ export const findMessages = async (chatId: string) => {
   return result;
 };
 
-export const newChat = async (data: typeof chats.$inferInsert) => {
-  await db.insert(chats).values(data);
+export const createChat = async (data: typeof chats.$inferInsert) => {
+  const [result] = await db.insert(chats).values(data).returning();
+  return result;
 };
 
 type InsertParticipants = typeof participants.$inferInsert;

@@ -1,4 +1,4 @@
-import { TEditProfile } from "@/validation/user";
+import { TEditProfile } from "@/validators/user";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 

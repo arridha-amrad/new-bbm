@@ -3,6 +3,7 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 import { TMessage } from "./messageSlice";
 
 export type TChat = {
+  chatName: string | null;
   userId: string;
   username: string;
   imageURL: string;
