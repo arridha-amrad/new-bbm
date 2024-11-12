@@ -1,5 +1,7 @@
-import { sendMessage } from "@/api/chat";
+import { sendMessageApi } from "@/api/chat";
 import useClickOutside from "@/hooks/useClickOutside";
+import { updateChat } from "@/lib/redux/chatSlice";
+import { addMessage } from "@/lib/redux/messageSlice";
 import { RootState } from "@/lib/redux/store";
 import { getSocket } from "@/lib/socket";
 import data from "@emoji-mart/data";
@@ -12,17 +14,18 @@ import IconButton from "@mui/material/IconButton";
 import InputBase from "@mui/material/InputBase";
 import Stack from "@mui/material/Stack";
 import { FormEvent, useRef, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useSearchParams } from "react-router-dom";
 
 export default function CreateMessageForm() {
   const [text, setText] = useState<string>("");
   const [showPicker, setShowPicker] = useState<boolean>(false);
   const [cursorPosition, setCursorPosition] = useState<number>(0);
   const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement | null>(null);
-
-  const { user } = useSelector((state: RootState) => state.auth);
+  const dispatch = useDispatch();
   const { currChat } = useSelector((state: RootState) => state.chat);
 
+  const [_, setParams] = useSearchParams();
   const { domNodeRef: pickerRef } = useClickOutside(
     () => setShowPicker(false),
     inputRef
@@ -67,24 +70,22 @@ export default function CreateMessageForm() {
     e.preventDefault();
     if (!currChat) return;
     try {
-      const { data } = await sendMessage({
+      const { data } = await sendMessageApi({
         chatId: currChat?.chatId,
-        chatName: currChat.chatName,
         content: text,
-        receiverUserId: currChat.userId,
+        receiverId: currChat.userId,
       });
+      if (currChat.chatId === null) {
+        dispatch(updateChat(data.message));
+        setParams({ id: data.message.chatId });
+      }
+      dispatch(addMessage(data.message));
+      const socket = getSocket();
+      socket?.emit("sendMessage", data.message, currChat.userId);
+      setText("");
     } catch (error) {
       console.log(error);
     }
-    // const socket = getSocket();
-    // socket?.emit("sendMessage", {
-    //   userId: user?.id,
-    //   text,
-    //   chatId: currChat?.chatId,
-    //   toUserId: currChat?.userId,
-    //   sentAt: new Date(),
-    // });
-    setText("");
   };
 
   return (

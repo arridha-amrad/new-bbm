@@ -34,7 +34,11 @@ export const chatSlice = createSlice({
       state.chats = action.payload;
     },
     addChat: (state, action: PayloadAction<TChat>) => {
-      state.chats.unshift(action.payload);
+      const newChat = action.payload;
+      const isChatExists = state.chats.find((c) => c.userId === newChat.userId);
+      if (!isChatExists) {
+        state.chats.unshift(action.payload);
+      }
       state.currChat = action.payload;
     },
     updateChat: (state, action: PayloadAction<TMessage>) => {

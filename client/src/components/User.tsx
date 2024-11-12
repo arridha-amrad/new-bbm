@@ -5,7 +5,6 @@ import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
 
 type Props = {
   user: TUSerSearch;
@@ -13,7 +12,6 @@ type Props = {
 
 const User = ({ user }: Props) => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const addToChats = () => {
     dispatch(
       addChat({
@@ -26,7 +24,6 @@ const User = ({ user }: Props) => {
         latestMessageDate: null,
       })
     );
-    navigate("/chat?id=");
     dispatch(offSearch());
   };
   return (

@@ -3,14 +3,11 @@ import { Server as SocketIOServer } from "socket.io";
 import {
   ClientToServerEvents,
   InterServerEvents,
-  SendMessage,
   ServerToClientEvents,
   SocketData,
   SocketUser,
   StoredSocketUser,
 } from "./types";
-import { newChat, newParticipants, saveMessage } from "@/services/chats";
-import { nanoid } from "nanoid";
 
 let users: StoredSocketUser[] = [];
 
@@ -51,30 +48,10 @@ export const initSocket = (
       add({ ...data, socketId: socket.id });
       console.log({ users });
     });
-    socket.on("sendMessage", async (data: SendMessage) => {
-      let newChatId = data.chatId;
-      if (!newChatId) {
-        newChatId = nanoid(15);
-        await newChat({ id: newChatId });
-        await newParticipants([
-          {
-            chatId: newChatId,
-            userId: data.userId,
-          },
-          {
-            chatId: newChatId,
-            userId: data.toUserId,
-          },
-        ]);
-      }
-      const newMessage = await saveMessage({
-        chatId: newChatId,
-        content: data.text,
-        userId: data.userId,
-      });
-      const toSocketId = findSocketId(data.toUserId);
+    socket.on("sendMessage", async (message, receiverId) => {
+      const toSocketId = findSocketId(receiverId);
       if (toSocketId) {
-        io.to([toSocketId, socket.id]).emit("receiveMessage", newMessage);
+        io.to([toSocketId, socket.id]).emit("receiveMessage", message);
       }
     });
     socket.on("typing", (data) => {

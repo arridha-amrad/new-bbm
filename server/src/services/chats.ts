@@ -44,8 +44,8 @@ export const findMessages = async (chatId: string) => {
   return result;
 };
 
-export const createChat = async (data: typeof chats.$inferInsert) => {
-  const [result] = await db.insert(chats).values(data).returning();
+export const createChat = async () => {
+  const [result] = await db.insert(chats).values({}).returning();
   return result;
 };
 

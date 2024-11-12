@@ -1,7 +1,7 @@
 import { meApi, refreshTokenApi } from "@/api/auth";
 import { getToken, setToken } from "@/lib/axios";
 import { redirect } from "react-router-dom";
-import { fetchMyChats } from "./api/chat";
+import { fetchChatsApi } from "./api/chat";
 
 export const rootLoader = async () => {
   try {
@@ -20,6 +20,6 @@ export const rootLoader = async () => {
 };
 
 export const homeLoader = async () => {
-  const { data } = await fetchMyChats();
+  const { data } = await fetchChatsApi();
   return data;
 };
