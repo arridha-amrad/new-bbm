@@ -1,6 +1,6 @@
 import { sendMessageApi } from "@/api/chat";
 import useClickOutside from "@/hooks/useClickOutside";
-import { updateChat } from "@/lib/redux/chatSlice";
+import { updateCurrChat } from "@/lib/redux/chatSlice";
 import { addMessage } from "@/lib/redux/messageSlice";
 import { RootState } from "@/lib/redux/store";
 import { getSocket } from "@/lib/socket";
@@ -76,9 +76,9 @@ export default function CreateMessageForm() {
         receiverId: currChat.userId,
       });
       if (currChat.chatId === null) {
-        dispatch(updateChat(data.message));
         setParams({ id: data.message.chatId });
       }
+      dispatch(updateCurrChat(data.message));
       dispatch(addMessage(data.message));
       const socket = getSocket();
       socket?.emit("sendMessage", data.message, currChat.userId);

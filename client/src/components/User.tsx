@@ -1,10 +1,11 @@
 import { addChat } from "@/lib/redux/chatSlice";
+import { RootState } from "@/lib/redux/store";
 import { offSearch, TUSerSearch } from "@/lib/redux/userSlice";
 import Avatar from "@mui/material/Avatar";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 type Props = {
   user: TUSerSearch;
@@ -12,18 +13,22 @@ type Props = {
 
 const User = ({ user }: Props) => {
   const dispatch = useDispatch();
+
+  const { user: authUser } = useSelector((state: RootState) => state.auth);
   const addToChats = () => {
-    dispatch(
-      addChat({
-        ...user,
-        chatName: null,
-        userId: user.id,
-        lastMessage: "",
-        chatId: null,
-        totalNotification: 0,
-        latestMessageDate: null,
-      })
-    );
+    if (user.id !== authUser?.id) {
+      dispatch(
+        addChat({
+          ...user,
+          chatName: null,
+          userId: user.id,
+          lastMessage: "",
+          chatId: null,
+          totalNotification: 0,
+          latestMessageDate: null,
+        })
+      );
+    }
     dispatch(offSearch());
   };
   return (

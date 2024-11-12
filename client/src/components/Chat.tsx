@@ -7,8 +7,9 @@ import Badge from "@mui/material/Badge";
 import Card from "@mui/material/Card";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 type Props = {
   chat: TChat;
@@ -19,10 +20,17 @@ export default function Chat({ chat }: Props) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const clock = formatClock(chat.latestMessageDate ?? new Date());
+  const [params] = useSearchParams();
+  const chatId = params.get("id");
+
+  useEffect(() => {
+    if (chatId && chat.chatId === chatId) {
+      dispatch(setCurrChat(chat));
+    }
+  }, [chatId]);
 
   const setChat = async () => {
     navigate(`/chat?id=${chat.chatId}`);
-    dispatch(setCurrChat(chat));
   };
   return (
     <Card>

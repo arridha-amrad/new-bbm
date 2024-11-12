@@ -31,7 +31,11 @@ export const chatSlice = createSlice({
       state.currChat = action.payload;
     },
     setChats: (state, action: PayloadAction<TChat[]>) => {
-      state.chats = action.payload;
+      state.chats = action.payload.sort(
+        (a, b) =>
+          new Date(b.latestMessageDate!).getTime() -
+          new Date(a.latestMessageDate!).getTime()
+      );
     },
     addChat: (state, action: PayloadAction<TChat>) => {
       const newChat = action.payload;
@@ -41,15 +45,19 @@ export const chatSlice = createSlice({
       }
       state.currChat = action.payload;
     },
-    updateChat: (state, action: PayloadAction<TMessage>) => {
+    updateCurrChat: (state, action: PayloadAction<TMessage>) => {
       const { sentAt, chatId, content } = action.payload;
-      const currChat = state.chats.find((c) => c.chatId === chatId);
-      if (!currChat) return;
+      const idx = state.chats.findIndex((c) => c.chatId === chatId);
+      if (idx < 0) return;
+      const currChat = state.chats[idx];
       currChat.lastMessage = content;
       currChat.latestMessageDate = sentAt;
+      state.chats.splice(idx, 1);
+      state.chats.unshift(currChat);
     },
   },
 });
 
-export const { setChats, addChat, setCurrChat, updateChat } = chatSlice.actions;
+export const { setChats, addChat, setCurrChat, updateCurrChat } =
+  chatSlice.actions;
 export const chatReducer = chatSlice.reducer;

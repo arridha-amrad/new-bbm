@@ -6,7 +6,6 @@ export const send = async (req: Request, res: Response, next: NextFunction) => {
   const { content, receiverId } = req.body;
   let { chatId } = req.body;
   try {
-    console.log(req.body);
     if (chatId === null) {
       const newChat = await createChat();
       chatId = newChat.id;

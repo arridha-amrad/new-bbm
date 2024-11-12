@@ -1,4 +1,4 @@
-import { updateChat } from "@/lib/redux/chatSlice";
+import { updateCurrChat } from "@/lib/redux/chatSlice";
 import { addMessage } from "@/lib/redux/messageSlice";
 import { setSocket } from "@/lib/socket";
 import { useEffect } from "react";
@@ -12,7 +12,7 @@ export const useSocket = () => {
     setSocket(socket);
     socket.on("receiveMessage", (message) => {
       dispatch(addMessage(message));
-      dispatch(updateChat(message));
+      dispatch(updateCurrChat(message));
     });
     return () => {
       socket.disconnect();
