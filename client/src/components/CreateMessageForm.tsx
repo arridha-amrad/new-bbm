@@ -24,6 +24,8 @@ export default function CreateMessageForm() {
   const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement | null>(null);
   const dispatch = useDispatch();
   const { currChat } = useSelector((state: RootState) => state.chat);
+  const { user } = useSelector((state: RootState) => state.auth);
+  const socket = getSocket();
 
   const [_, setParams] = useSearchParams();
   const { domNodeRef: pickerRef } = useClickOutside(
@@ -52,10 +54,15 @@ export default function CreateMessageForm() {
   };
 
   const updateCursorPosition = () => {
+    socket?.emit("typing", (currChat?.userId, user?.id));
     if (inputRef.current) {
       const currentPosition = inputRef.current.selectionStart ?? 0;
       setCursorPosition(currentPosition);
     }
+  };
+
+  const handleOnBlur = () => {
+    socket?.emit("noTyping", (currChat?.userId, user?.id));
   };
 
   const handleTextChange = (
@@ -124,6 +131,7 @@ export default function CreateMessageForm() {
           onMouseUp={updateCursorPosition} // Update cursor position on click
           onFocus={updateCursorPosition}
           onChange={handleTextChange}
+          onBlur={handleOnBlur}
           inputRef={inputRef}
           value={text}
           fullWidth

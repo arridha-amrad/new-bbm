@@ -1,4 +1,4 @@
-import { relations, sql } from "drizzle-orm";
+import { relations } from "drizzle-orm";
 import {
   index,
   sqliteTable,
@@ -7,6 +7,31 @@ import {
   integer,
 } from "drizzle-orm/sqlite-core";
 import { nanoid } from "nanoid";
+
+export const lastSeen = sqliteTable("last_seen", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => nanoid(15)),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id),
+  lastSeenAt: text("last_seen_at")
+    .$defaultFn(() => new Date().toISOString())
+    .$onUpdate(() => new Date().toISOString()),
+});
+
+export const messageReaders = sqliteTable("message_readers", {
+  id: integer({ mode: "number" }).primaryKey({ autoIncrement: true }),
+  chatId: text("chat_id")
+    .notNull()
+    .references(() => chats.id),
+  readerId: text("reader_id")
+    .notNull()
+    .references(() => users.id),
+  readAt: text("read_at")
+    .$defaultFn(() => new Date().toISOString())
+    .$onUpdate(() => new Date().toISOString()),
+});
 
 export const users = sqliteTable(
   "users",

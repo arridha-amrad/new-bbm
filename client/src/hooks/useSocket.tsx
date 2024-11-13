@@ -1,4 +1,8 @@
-import { updateCurrChat } from "@/lib/redux/chatSlice";
+import {
+  updateCurrChat,
+  updateCurrChatIsTyping,
+  updateCurrChatStatus,
+} from "@/lib/redux/chatSlice";
 import { addMessage } from "@/lib/redux/messageSlice";
 import { setSocket } from "@/lib/socket";
 import { useEffect } from "react";
@@ -13,6 +17,12 @@ export const useSocket = () => {
     socket.on("receiveMessage", (message) => {
       dispatch(addMessage(message));
       dispatch(updateCurrChat(message));
+    });
+    socket.on("checkOnlineStatus", (data: string) => {
+      dispatch(updateCurrChatStatus(data));
+    });
+    socket.on("typingAlert", (data: boolean) => {
+      dispatch(updateCurrChatIsTyping(data));
     });
     return () => {
       socket.disconnect();

@@ -12,7 +12,7 @@ export default function ChatUser() {
       <Stack direction={"column"} justifyContent={"center"}>
         <Typography fontWeight={"700"}>{currChat?.username}</Typography>
         <Typography variant="body2" color="textDisabled" fontStyle={"italic"}>
-          Last seen 22:00
+          {currChat?.isTyping ? "typing..." : currChat?.status}
         </Typography>
       </Stack>
     </Stack>

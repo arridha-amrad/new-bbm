@@ -1,6 +1,7 @@
 import { formatClock } from "@/helpers/formatClock";
 import { setCurrChat, TChat } from "@/lib/redux/chatSlice";
 import { RootState } from "@/lib/redux/store";
+import { getSocket } from "@/lib/socket";
 import { CardActionArea } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import Badge from "@mui/material/Badge";
@@ -17,14 +18,17 @@ type Props = {
 
 export default function Chat({ chat }: Props) {
   const { currChat } = useSelector((state: RootState) => state.chat);
+  const { user } = useSelector((state: RootState) => state.auth);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const clock = formatClock(chat.latestMessageDate ?? new Date());
   const [params] = useSearchParams();
   const chatId = params.get("id");
+  const socket = getSocket();
 
   useEffect(() => {
     if (chatId && chat.chatId === chatId) {
+      socket?.emit("setChat", chat.userId, user?.id);
       dispatch(setCurrChat(chat));
     }
   }, [chatId]);
@@ -32,6 +36,7 @@ export default function Chat({ chat }: Props) {
   const setChat = async () => {
     navigate(`/chat?id=${chat.chatId}`);
   };
+
   return (
     <Card>
       <CardActionArea

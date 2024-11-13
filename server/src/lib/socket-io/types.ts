@@ -8,14 +8,17 @@ export interface ServerToClientEvents {
   basicEmit: (a: number, b: string, c: Buffer) => void;
   withAck: (d: string, callback: (e: number) => void) => void;
   receiveMessage: (message: Message) => void;
-  typingAlert: (data: Typing) => void;
+  checkOnlineStatus: (status: string) => void;
+  typingAlert: (data: boolean) => void;
 }
 
 export interface ClientToServerEvents {
   hello: () => void;
   addUser: (data: SocketUser) => void;
   sendMessage: (message: Message, receiverId: string) => void;
-  typing: (data: Typing) => void;
+  setChat: (receiverId: string, senderId: string) => void;
+  typing: (receiverId: string, senderId: string) => void;
+  noTyping: (receiverId: string, senderId: string) => void;
 }
 
 export interface InterServerEvents {
