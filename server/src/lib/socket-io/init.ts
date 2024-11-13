@@ -51,7 +51,7 @@ export const initSocket = (
     socket.on("sendMessage", async (message, receiverId) => {
       const toSocketId = findSocketId(receiverId);
       if (toSocketId) {
-        io.to([toSocketId, socket.id]).emit("receiveMessage", message);
+        io.to([toSocketId]).emit("receiveMessage", message);
       }
     });
     socket.on("typing", (data) => {

@@ -1,16 +1,17 @@
 import Chats from "@/components/Chats";
 import Search from "@/components/Search";
+import SearchUserResult from "@/components/SearchUserResult";
 import TabBar from "@/components/TabBar";
-import User from "@/components/User";
 import { setChats } from "@/lib/redux/chatSlice";
 import { RootState } from "@/lib/redux/store";
 import { CreateOutlined } from "@mui/icons-material";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
+import Snackbar from "@mui/material/Snackbar";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Outlet, useLoaderData } from "react-router-dom";
 
@@ -20,6 +21,8 @@ export default function Home() {
   );
   const dispatch = useDispatch();
   const data = useLoaderData() as any;
+
+  const [chatError, setChatError] = useState("");
 
   useEffect(() => {
     dispatch(
@@ -49,16 +52,7 @@ export default function Home() {
           </Stack>
           <Search />
           {searchActive && searchResult.length > 0 ? (
-            <Stack flex="1" overflow={"auto"} direction={"column"}>
-              <Divider textAlign="left">
-                <Typography variant="subtitle2" color="textDisabled">
-                  Search Result
-                </Typography>
-              </Divider>
-              {searchResult.map((user) => (
-                <User key={user.id} user={user} />
-              ))}
-            </Stack>
+            <SearchUserResult setChatError={setChatError} />
           ) : (
             <Chats />
           )}
@@ -70,6 +64,12 @@ export default function Home() {
       <Box height={"inherit"} flex="2">
         <Outlet />
       </Box>
+      <Snackbar
+        open={!!chatError}
+        autoHideDuration={3000}
+        onClose={() => setChatError("")}
+        message={chatError}
+      />
     </>
   );
 }
