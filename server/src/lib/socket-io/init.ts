@@ -11,6 +11,7 @@ import {
 import db from "../drizzle/db";
 import { lastSeen } from "../drizzle/schema";
 import { eq } from "drizzle-orm";
+import { formatDistanceToNowStrict } from "date-fns";
 
 let users: StoredSocketUser[] = [];
 
@@ -50,27 +51,43 @@ export const initSocket = (
     socket.on("addUser", async (data: SocketUser) => {
       add({ ...data, socketId: socket.id });
       console.log({ users });
-      await db.insert(lastSeen).values({
-        userId: data.userId,
-      });
+      const [lastSeenData] = await db
+        .select()
+        .from(lastSeen)
+        .where(eq(lastSeen.userId, data.userId));
+      if (!lastSeenData) {
+        await db.insert(lastSeen).values({ userId: data.userId });
+      } else {
+        await db
+          .update(lastSeen)
+          .set({ lastSeenAt: new Date().toISOString() })
+          .where(eq(lastSeen.userId, data.userId));
+      }
     });
     socket.on("setChat", async (receiverId, senderId) => {
       console.log({ receiverId, senderId });
       const toSocketId = findSocketId(receiverId);
       const sender = findSocketId(senderId);
-
-      if (sender) {
-        if (toSocketId) {
-          io.to([sender]).emit("checkOnlineStatus", "online");
-        }
-        const [status] = await db
+      if (!sender) return;
+      if (toSocketId) {
+        io.to([sender]).emit("checkIsOlineOrLastSeen", "online");
+      } else {
+        const status = await db
           .select()
           .from(lastSeen)
           .where(eq(lastSeen.userId, receiverId));
-        io.to([sender]).emit(
-          "checkOnlineStatus",
-          status.lastSeenAt ?? new Date().toISOString()
-        );
+        let date: string | null = null;
+
+        if (status.length > 0) {
+          console.log({ status });
+          date = status[0].lastSeenAt;
+        }
+        const lastSeenAt = date
+          ? formatDistanceToNowStrict(date, {
+              addSuffix: true,
+            })
+          : "";
+        io.to([sender]).emit("checkIsOlineOrLastSeen", lastSeenAt);
       }
     });
     socket.on("sendMessage", async (message, receiverId) => {
@@ -92,10 +109,16 @@ export const initSocket = (
       }
     });
     socket.on("disconnect", async () => {
+      const user = users.find((u) => u.socketId === socket.id);
+      if (user) {
+        await db
+          .update(lastSeen)
+          .set({
+            lastSeenAt: new Date().toISOString(),
+          })
+          .where(eq(lastSeen.userId, user.userId));
+      }
       removeUser(socket.id);
-      await db.update(lastSeen).set({
-        lastSeenAt: new Date().toISOString(),
-      });
       console.log("disconnect");
       console.log({ users });
     });

@@ -6,13 +6,15 @@ import { useSelector } from "react-redux";
 
 export default function ChatUser() {
   const { currChat } = useSelector((state: RootState) => state.chat);
+  if (!currChat) return null;
+
   return (
     <Stack alignItems={"center"} direction={"row"} gap={1} py={1} px={2}>
       <Avatar src={currChat?.imageURL} />
       <Stack direction={"column"} justifyContent={"center"}>
         <Typography fontWeight={"700"}>{currChat?.username}</Typography>
         <Typography variant="body2" color="textDisabled" fontStyle={"italic"}>
-          {currChat?.isTyping ? "typing..." : currChat?.status}
+          {currChat.isTyping ? "Typing..." : currChat.onlineStatus}
         </Typography>
       </Stack>
     </Stack>

@@ -11,8 +11,8 @@ export type TChat = {
   lastMessage: string;
   totalNotification: number;
   latestMessageDate: Date | null;
-  status: string | null;
   isTyping: boolean | null;
+  onlineStatus: string | null;
 };
 
 export interface AuthState {
@@ -47,10 +47,10 @@ export const chatSlice = createSlice({
       }
       state.currChat = action.payload;
     },
-    updateCurrChatStatus: (state, action: PayloadAction<string>) => {
+    updateCurrChatOnlineStatus: (state, action: PayloadAction<string>) => {
       const currChat = state.currChat;
       if (currChat) {
-        currChat.status = action.payload;
+        currChat.onlineStatus = action.payload;
       }
     },
     updateCurrChatIsTyping: (state, action: PayloadAction<boolean>) => {
@@ -77,7 +77,7 @@ export const {
   addChat,
   setCurrChat,
   updateCurrChat,
-  updateCurrChatStatus,
+  updateCurrChatOnlineStatus,
   updateCurrChatIsTyping,
 } = chatSlice.actions;
 export const chatReducer = chatSlice.reducer;

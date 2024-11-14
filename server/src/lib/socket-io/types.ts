@@ -8,7 +8,7 @@ export interface ServerToClientEvents {
   basicEmit: (a: number, b: string, c: Buffer) => void;
   withAck: (d: string, callback: (e: number) => void) => void;
   receiveMessage: (message: Message) => void;
-  checkOnlineStatus: (status: string) => void;
+  checkIsOlineOrLastSeen: (data: string) => void;
   typingAlert: (data: boolean) => void;
 }
 
