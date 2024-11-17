@@ -29,6 +29,13 @@
       "when": 1731492949146,
       "tag": "0003_organic_inertia",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1731841556113,
+      "tag": "0004_alter chat_id to message_id",
+      "breakpoints": true
     }
   ]
 }

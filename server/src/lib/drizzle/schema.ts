@@ -22,9 +22,9 @@ export const lastSeen = sqliteTable("last_seen", {
 
 export const messageReaders = sqliteTable("message_readers", {
   id: integer({ mode: "number" }).primaryKey({ autoIncrement: true }),
-  chatId: text("chat_id")
+  messageId: text("message_id")
     .notNull()
-    .references(() => chats.id),
+    .references(() => messages.id),
   readerId: text("reader_id")
     .notNull()
     .references(() => users.id),

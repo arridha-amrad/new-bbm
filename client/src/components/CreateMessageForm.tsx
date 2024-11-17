@@ -16,6 +16,7 @@ import Stack from "@mui/material/Stack";
 import { FormEvent, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams } from "react-router-dom";
+import SentAudio from "@/assets/sent.mp3";
 
 export default function CreateMessageForm() {
   const [text, setText] = useState<string>("");
@@ -76,6 +77,7 @@ export default function CreateMessageForm() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!currChat) return;
+    const audio = new Audio(SentAudio);
     try {
       const { data } = await sendMessageApi({
         chatId: currChat?.chatId,
@@ -85,6 +87,7 @@ export default function CreateMessageForm() {
       if (currChat.chatId === null) {
         setParams({ id: data.message.chatId });
       }
+      await audio.play();
       dispatch(updateCurrChat(data.message));
       dispatch(addMessage(data.message));
       const socket = getSocket();

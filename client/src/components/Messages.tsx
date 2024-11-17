@@ -7,15 +7,28 @@ import { useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import { fetchChatMessagesApi } from "@/api/chat";
 import { setMessages } from "@/lib/redux/messageSlice";
+import { useDebounce } from "use-debounce";
 
 export default function Messages() {
-  const { messages } = useSelector((state: RootState) => state.message);
+  const { messages, justReadMessageIds } = useSelector(
+    (state: RootState) => state.message
+  );
   const { user } = useSelector((state: RootState) => state.auth);
   const ref = useRef<HTMLDivElement | null>(null);
 
   const [params] = useSearchParams();
   const chatId = params.get("id");
   const dispatch = useDispatch();
+
+  const [values] = useDebounce(justReadMessageIds, 1000);
+
+  useEffect(() => {
+    if (values) {
+      const newSet = new Set(values);
+      const newArr = Array.from(newSet);
+      console.log(newArr);
+    }
+  }, [values]);
 
   useEffect(() => {
     if (chatId) {
@@ -28,7 +41,7 @@ export default function Messages() {
   }, [chatId]);
 
   useEffect(() => {
-    ref.current?.scrollIntoView({ behavior: "smooth" });
+    ref.current?.scrollIntoView({ behavior: "instant" });
   }, [messages.length]);
 
   return (

@@ -1,5 +1,11 @@
 import db from "@/lib/drizzle/db";
-import { chats, messages, participants, users } from "@/lib/drizzle/schema";
+import {
+  chats,
+  messageReaders,
+  messages,
+  participants,
+  users,
+} from "@/lib/drizzle/schema";
 import { aliasedTable, and, eq, ne, sql } from "drizzle-orm";
 
 export const findChats = async (userId: string) => {
@@ -58,3 +64,5 @@ export const saveMessage = async (data: typeof messages.$inferInsert) => {
   const [result] = await db.insert(messages).values(data).returning();
   return result;
 };
+
+export const addNewMessageReaders = async () => {};

@@ -1,10 +1,13 @@
-import { TMessage } from "@/lib/redux/messageSlice";
+import { addJustReadMessageIds, TMessage } from "@/lib/redux/messageSlice";
 import { formatClock } from "@/helpers/formatClock";
 import EmojiEmotions from "@mui/icons-material/EmojiEmotions";
 import { Container, IconButton } from "@mui/material";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import { useInView } from "react-intersection-observer";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
 
 interface Props {
   message: TMessage;
@@ -12,8 +15,20 @@ interface Props {
 
 export default function OtherMessage({ message }: Props) {
   const clock = formatClock(message.sentAt);
+  const dispatch = useDispatch();
+
+  const { ref, inView } = useInView({
+    threshold: 0.5,
+  });
+
+  useEffect(() => {
+    if (inView) {
+      dispatch(addJustReadMessageIds(message.id));
+    }
+  }, [inView]);
+
   return (
-    <Stack alignSelf="start">
+    <Stack component="div" ref={ref} alignSelf="start">
       <Container maxWidth="sm">
         <Stack direction="row" gap={1}>
           <Box
