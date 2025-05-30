@@ -8,6 +8,7 @@ import {
 } from "@/lib/drizzle/schema";
 import { aliasedTable, and, eq, ne, sql } from "drizzle-orm";
 
+// ok
 export const findChats = async (userId: string) => {
   const p = aliasedTable(participants, "p");
   const query = await db
@@ -42,6 +43,7 @@ export const findChats = async (userId: string) => {
   return query;
 };
 
+// ok
 export const findMessages = async (chatId: string) => {
   const result = await db
     .select()
@@ -50,16 +52,19 @@ export const findMessages = async (chatId: string) => {
   return result;
 };
 
+// ok
 export const createChat = async () => {
   const [result] = await db.insert(chats).values({}).returning();
   return result;
 };
 
+// ok
 type InsertParticipants = typeof participants.$inferInsert;
 export const newParticipants = async (data: InsertParticipants[]) => {
   await db.insert(participants).values(data);
 };
 
+// ok
 export const saveMessage = async (data: typeof messages.$inferInsert) => {
   const [result] = await db.insert(messages).values(data).returning();
   return result;
