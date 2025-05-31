@@ -1,12 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -22,11 +15,14 @@ model User {
   imageURL       String?
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
+  jwtVersion     String
   tokens         Token[]
   messages       Message[]
   participants   Participant[]
-  lastSeen       LastSeen[]
+  lastSeen       LastSeen?
   messageReaders MessageReader[]
+  RefreshToken   RefreshToken[]
+  ActiveToken    ActiveToken[]
 
   @@index([username, email])
   @@map("users")
@@ -87,9 +83,33 @@ model MessageReader {
 
 model LastSeen {
   id         Int      @id @default(autoincrement())
-  userId     Int
+  userId     Int      @unique
   lastSeenAt DateTime @default(now()) @updatedAt
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("last_seen")
+}
+
+model RefreshToken {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deviceId  String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([token, deviceId])
+}
+
+model ActiveToken {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  jti       String
+  deviceId  String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([jti, deviceId])
 }

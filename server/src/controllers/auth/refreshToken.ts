@@ -1,62 +1,53 @@
-import { createToken, verifyToken } from "@/lib/jwt";
-import {
-  deleteTokenById,
-  deleteTokensByUserId,
-  findToken,
-  saveToken,
-} from "@/services/token";
-import { findUserById } from "@/services/user";
-import {
-  getRefreshTokenFromCookie,
-  cookieOptions,
-  REFRESH_TOKEN,
-} from "@/utils/cookies";
-import { CustomError } from "@/utils/CustomError";
+import { COOKIE_OPTIONS } from "@/constants";
+import AuthService from "@/services/AuthService";
+import TokenService from "@/services/TokenService";
+import UserService from "@/services/UserService";
+import { getCookie, getUserAgentAndIp } from "@/utils";
 import { NextFunction, Request, Response } from "express";
-import { nanoid } from "nanoid";
 
-export default async (req: Request, res: Response, next: NextFunction) => {
+export default async function refreshTokenHandler(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
-    const token = getRefreshTokenFromCookie(req);
-    if (!token) {
-      throw new CustomError("ref token was not included", 404);
+    const userService = new UserService();
+    const authService = new AuthService();
+    const tokenService = new TokenService();
+    const { ip, userAgent } = getUserAgentAndIp(req);
+    const { name, value } = getCookie(req, "refresh-token");
+
+    if (!value || !name) {
+      res.status(401).json({ message: "Refresh token is missing" });
+      return;
     }
-    const { userId, type, tokenId } = await verifyToken({
-      token,
-      type: "refresh",
-    });
-    if (type !== "refresh" || !tokenId) {
-      throw new CustomError("token invalid", 400);
-    }
-    const storedToken = await findToken(tokenId);
-    // reuse token detected
+    const storedToken = await authService.getRefreshToken(value, ip, userAgent);
     if (!storedToken) {
-      await deleteTokensByUserId(userId);
-      throw new CustomError("reuse token detected", 400);
+      res.status(404).json({ message: "Token not found" });
+      return;
     }
-    await deleteTokenById(storedToken.id);
-    const user = await findUserById(userId);
-    if (user === null) {
-      throw new CustomError("Unknown token", 400);
+    const user = await userService.getOneUser({
+      _id: storedToken.userId.toString(),
+    });
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
     }
-    const newTokenId = nanoid(15);
-    const newRefreshToken = await createToken({
-      type: "refresh",
-      userId: user.id,
-      tokenId: newTokenId,
-    });
-    const newAccessToken = await createToken({
-      type: "auth",
-      userId: user.id,
-    });
-    await saveToken({
-      userId: user.id,
-      value: newRefreshToken,
-      id: newTokenId,
-    });
-    res.cookie(REFRESH_TOKEN, `Bearer ${newRefreshToken}`, cookieOptions);
-    res.status(200).json({ token: `Bearer ${newAccessToken}` });
+
+    const { accessToken, rawRefreshToken } =
+      await authService.generateAuthToken({
+        jwtVersion: user.jwtVersion,
+        userId: user._id,
+        ip,
+        userAgent,
+        oldToken: storedToken.token,
+        deviceId: storedToken.deviceId,
+      });
+
+    res.cookie(name, rawRefreshToken, COOKIE_OPTIONS);
+    res.status(200).json({ accessToken });
+    return;
   } catch (err) {
     next(err);
   }
-};
+}

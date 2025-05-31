@@ -3,7 +3,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import morgan from "morgan";
 import UserRoutes from "@/routes/user";
-import AuthRoutes from "@/routes/auth";
+import AuthRoutes from "@/routes/auth.routes";
 import ChatRoutes from "@/routes/chat";
 import { CustomError, ValidationError } from "./utils/CustomError";
 
