@@ -16,4 +16,11 @@ export default class RefreshTokenRepository {
     });
     return result;
   }
+
+  async findOne(where: Prisma.RefreshTokenWhereUniqueInput) {
+    const result = await prisma.refreshToken.findUnique({
+      where
+    })
+    return result
+  }
 }

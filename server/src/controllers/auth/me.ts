@@ -1,23 +1,28 @@
-import { findUserById } from "@/services/user";
-import { CustomError } from "@/utils/CustomError";
-import { NextFunction, Request, Response } from "express";
+import UserService from '@/services/UserService';
+import { NextFunction, Request, Response } from 'express';
+import { errorMonitor } from 'stream';
 
-const me = async (req: Request, res: Response, next: NextFunction) => {
-  const userId = req.app.locals.userId;
-  if (typeof userId !== "string") {
-    throw new CustomError("invalid userId", 500);
-  }
+export default async function getAuthUser(req: Request, res: Response, next: NextFunction) {
   try {
-    const user = await findUserById(userId);
-    if (!user) {
-      throw new CustomError("User not found", 404);
-    }
-    // eslint-disable-next-line
-    const { password, ...props } = user;
-    res.status(200).json({ user: props });
-  } catch (err) {
-    next(err);
-  }
-};
 
-export default me;
+    const userService = new UserService();
+    const userId = req.user?.id;
+
+    if (!userId) {
+      res.status(401).json({ message: 'UnAuthorized' });
+      return;
+    }
+
+    const user = await userService.getOneUser({ id: userId });
+    if (!user) {
+      res.status(404).json({ message: 'User not found' });
+      return;
+    }
+
+    res.status(200).json({ user: userService.setUserResponse(user) });
+    return;
+
+  } catch (err) {
+    next(errorMonitor)
+  }
+}

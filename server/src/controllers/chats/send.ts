@@ -1,27 +1,30 @@
-import { createChat, newParticipants, saveMessage } from "@/services/chats";
+import { SendMessageInput } from "@/middleware/validator/sendMessage.validator";
+import ChatService from "@/services/ChatService";
 import { NextFunction, Request, Response } from "express";
 
 export const send = async (req: Request, res: Response, next: NextFunction) => {
-  const userId = req.app.locals.userId;
-  const { content, receiverId } = req.body;
-  let { chatId } = req.body;
+  const userId = req.user?.id;
+  const { content, receiverIds, sentAt } = req.body as SendMessageInput;
+  let { chatId } = req.body as SendMessageInput
+
+  const chatService = new ChatService()
+
   try {
-    if (chatId === null) {
-      const newChat = await createChat();
-      chatId = newChat.id;
-      await newParticipants([
-        {
-          chatId,
-          userId,
-        },
-        {
-          chatId,
-          userId: receiverId,
-        },
-      ]);
+    if (!userId) {
+      res.sendStatus(401)
+      return
     }
-    const message = await saveMessage({ content, userId, chatId });
+
+    if (!chatId) {
+      const newChat = await chatService.initChat()
+      chatId = newChat.id;
+      await chatService.addChatParticipants(chatId, [...receiverIds, userId])
+    }
+
+    const message = await chatService.saveMessage(chatId, content, sentAt, userId);
     res.status(201).json({ message });
+    return
+
   } catch (err) {
     next(err);
   }

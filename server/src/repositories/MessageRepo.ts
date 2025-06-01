@@ -20,11 +20,10 @@ export default class MessageRepo {
     return result;
   }
 
-  async findMany(chatId?: number, userId?: number) {
+  async findMany(chatId: number) {
     const result = await prisma.message.findMany({
       where: {
         chatId,
-        userId,
       },
     });
     return result;

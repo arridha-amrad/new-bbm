@@ -2,17 +2,18 @@ import login from "@/controllers/auth/login";
 import logout from "@/controllers/auth/logout";
 import me from "@/controllers/auth/me";
 import refreshToken from "@/controllers/auth/refreshToken";
-import register from "@/controllers/auth/register";
-import { verifyAuthToken } from "@/lib/jwt";
-import { validateSignupInput } from "@/middleware/validator/signup";
+import signup from "@/controllers/auth/signup";
+import { protectedRoute } from "@/middleware/protectedRoute";
+import { validateLoginInput } from "@/middleware/validator/login.validator";
+import { validateSignupInput } from "@/middleware/validator/signup.validator";
 import { Router } from "express";
 
 const router = Router();
 
-router.get("/", verifyAuthToken, me);
-router.post("/", login);
-router.post("/register", validateSignupInput, register);
-router.get("/logout", logout);
-router.get("/refresh-token", refreshToken);
+router.get("/", protectedRoute, me);
+router.post("/", validateLoginInput, login);
+router.post("/register", validateSignupInput, signup);
+router.post("/logout", protectedRoute, logout);
+router.post("/refresh-token", refreshToken);
 
 export default router;

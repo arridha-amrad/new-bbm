@@ -1,4 +1,6 @@
 import { customAlphabet } from "nanoid";
+import { Request } from "express"
+import { COOKIE_REF_TOKEN } from "./constants";
 
 const alphabet =
   "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -29,4 +31,21 @@ export const setExpiryDate = (
       break;
   }
   return new Date(Date.now() + multiply * number);
+};
+
+type TCookieType = 'refresh-token';
+export const getCookie = (req: Request, type: TCookieType) => {
+  let value: string | undefined;
+  let name: string | undefined;
+  switch (type) {
+    case 'refresh-token':
+      value = req.cookies[COOKIE_REF_TOKEN];
+      name = COOKIE_REF_TOKEN;
+      break;
+    default:
+      value = undefined;
+      name = undefined;
+      break;
+  }
+  return { value, name };
 };

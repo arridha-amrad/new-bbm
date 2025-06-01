@@ -10,11 +10,27 @@ type TCreateUser = {
   imageURL: string;
 };
 
+type TGetOneUser = {
+  id?: number
+  username?: string
+  email?: string
+}
+
 export default class UserService {
   constructor(
     private userRepo = new UserRepository(),
     private pwdService = new PasswordService()
-  ) {}
+  ) { }
+
+  async searchUsers(key: string) {
+    const users = await this.userRepo.findMany(key)
+    return users
+  }
+
+  async updateUser(id: number, data: { username?: string, imageURL?: string }) {
+    const updatedData = await this.userRepo.updateOne(id, data)
+    return updatedData
+  }
 
   async checkEmailAndUsernameUniqueness(email: string, username: string) {
     const userWithSameEmail = await this.userRepo.findOne({ email });
@@ -29,6 +45,10 @@ export default class UserService {
         constraint: "username",
       };
     }
+  }
+
+  async getOneUser({ email, id, username }: TGetOneUser) {
+    return this.userRepo.findOne({ id, email, username });
   }
 
   async addNewUser(data: TCreateUser) {

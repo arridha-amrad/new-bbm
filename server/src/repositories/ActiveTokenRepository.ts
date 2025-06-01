@@ -16,4 +16,13 @@ export default class ActiveTokenRepository {
       },
     });
   }
+
+  async findOne(where: Prisma.ActiveTokenWhereUniqueInput) {
+    const result = await prisma.activeToken.findUnique({
+      where
+    })
+    return result
+  }
+
+
 }

@@ -70,4 +70,4 @@ export const saveMessage = async (data: typeof messages.$inferInsert) => {
   return result;
 };
 
-export const addNewMessageReaders = async () => {};
+export const addNewMessageReaders = async () => { };

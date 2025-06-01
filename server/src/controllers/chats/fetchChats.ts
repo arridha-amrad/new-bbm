@@ -1,4 +1,4 @@
-import { findChats } from "@/services/chats";
+import ChatService from "@/services/ChatService";
 import { NextFunction, Request, Response } from "express";
 
 export const fetchChats = async (
@@ -6,10 +6,16 @@ export const fetchChats = async (
   res: Response,
   next: NextFunction
 ) => {
-  const userId = req.app.locals.userId;
-  const chats = await findChats(userId);
-  res.status(200).json(chats);
+  const userId = req.user?.id
+  const chatService = new ChatService()
   try {
+    if (!userId) {
+      res.sendStatus(401)
+      return
+    }
+    const chats = await chatService.fetchChatsByUserId(userId)
+    res.status(200).json({ chats });
+    return
   } catch (err) {
     next(err);
   }

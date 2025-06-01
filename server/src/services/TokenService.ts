@@ -8,7 +8,7 @@ import {
   SignJWT,
 } from "jose";
 
-export type TokenPayload = JWTPayload & { id: string; jwtVersion: string };
+export type TokenPayload = JWTPayload & { id: number; jwtVersion: string };
 
 const secret = new TextEncoder().encode(env.JWT_SECRET);
 
@@ -31,9 +31,9 @@ export default class TokenService {
       return payload;
     } catch (err) {
       if (err instanceof JoseErrors.JWTExpired) {
-        throw new Error("Token expired");
+        throw err;
       }
-      throw new Error("Invalid token");
+      throw new Error('Invalid token');
     }
   }
 

@@ -1,24 +1,32 @@
-import { verifyToken } from "@/lib/jwt";
-import { removeToken } from "@/services/token";
-import { getRefreshTokenFromCookie } from "@/utils/cookies";
-import { NextFunction, Request, Response } from "express";
+import { COOKIE_OPTIONS } from '@/constants';
+import AuthService from '@/services/AuthService';
+import { getCookie } from '@/utils';
+import { NextFunction, Request, Response } from 'express';
 
-export default async (req: Request, res: Response, next: NextFunction) => {
-  const currentRefToken = getRefreshTokenFromCookie(req);
+export default async function logoutHandler(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
   try {
-    if (currentRefToken) {
-      const { tokenId } = await verifyToken({
-        token: currentRefToken,
-        type: "refresh",
-        ignoreExpiration: true,
-      });
-      if (tokenId) {
-        await removeToken(tokenId);
+
+    const authService = new AuthService();
+
+    const { name, value } = getCookie(req, 'refresh-token');
+    if (name && value) {
+      await authService.clearAuthSession(value);
+
+      const storedToken = await authService.getRefreshToken(value);
+      if (storedToken?.deviceId) {
+        await authService.blackListToken(storedToken.deviceId);
       }
+
+      res.clearCookie(name, COOKIE_OPTIONS);
     }
-    res.clearCookie("token");
-    res.sendStatus(200);
+
+    res.status(200).send('Logout');
+    return;
   } catch (err) {
     next(err);
   }
-};
+}

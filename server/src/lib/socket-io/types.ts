@@ -1,12 +1,8 @@
-import { messages, users } from "../drizzle/schema";
+import { Prisma } from "@prisma/client";
 
-type User = typeof users.$inferSelect;
-type Message = typeof messages.$inferSelect;
+type Message = Pick<Prisma.MessageSelect, "chatId" | "content" | "sentAt" | "userId">
 
 export interface ServerToClientEvents {
-  noArg: () => void;
-  basicEmit: (a: number, b: string, c: Buffer) => void;
-  withAck: (d: string, callback: (e: number) => void) => void;
   receiveMessage: (message: Message) => void;
   checkIsOlineOrLastSeen: (data: string) => void;
   typingAlert: (data: boolean) => void;
@@ -15,10 +11,10 @@ export interface ServerToClientEvents {
 export interface ClientToServerEvents {
   hello: () => void;
   addUser: (data: SocketUser) => void;
-  sendMessage: (message: Message, receiverId: string) => void;
-  setChat: (receiverId: string, senderId: string) => void;
-  typing: (receiverId: string, senderId: string) => void;
-  noTyping: (receiverId: string, senderId: string) => void;
+  sendMessage: (receiverIds: number[], message: Message) => void;
+  setChat: (receiverIds: number[], senderId: number, isGroup: boolean) => void;
+  typing: (receiverIds: number[], senderId: number) => void;
+  noTyping: (receiverIds: number[], senderId: number) => void;
 }
 
 export interface InterServerEvents {
@@ -37,9 +33,7 @@ export interface SocketData {
 
 export interface SocketUser {
   username: string;
-  userId: string;
+  userId: number;
 }
-
-export type Sender = Omit<User, "password" | "createdAt" | "updatedAt">;
 
 export type StoredSocketUser = SocketUser & { socketId: string };

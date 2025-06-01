@@ -1,5 +1,5 @@
 import { COOKIE_OPTIONS, COOKIE_REF_TOKEN } from "@/constants";
-import { SignupInput } from "@/middleware/validator/signup";
+import { SignupInput } from "@/middleware/validator/signup.validator";
 import AuthService from "@/services/AuthService";
 import UserService from "@/services/UserService";
 import { NextFunction, Request, Response } from "express";

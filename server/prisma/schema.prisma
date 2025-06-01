@@ -106,7 +106,7 @@ model ActiveToken {
   id        Int      @id @default(autoincrement())
   userId    Int
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  jti       String
+  jti       String   @unique
   deviceId  String
   expiresAt DateTime
   createdAt DateTime @default(now())

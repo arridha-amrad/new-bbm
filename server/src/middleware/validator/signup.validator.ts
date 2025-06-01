@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import sanitizeHtml from "sanitize-html";
 
 import { z } from "zod";
-import { formatZodErrors, messages } from "./helper";
+import { formatZodErrors, messages } from "./helper.validator";
 
 const schema = z.object({
   username: z
