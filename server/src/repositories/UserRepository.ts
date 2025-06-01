@@ -16,17 +16,20 @@ export default class UserRepository {
     return result;
   }
 
-  async updateOne(id: number, { imageURL, username }: { username?: string, imageURL?: string }) {
+  async updateOne(
+    id: number,
+    { imageURL, username }: { username?: string; imageURL?: string }
+  ) {
     const result = await prisma.user.update({
       where: {
-        id
+        id,
       },
       data: {
         username,
-        imageURL
+        imageURL,
       },
-    })
-    return result
+    });
+    return result;
   }
 
   async findMany(key: string) {
@@ -35,9 +38,9 @@ export default class UserRepository {
       where: {
         username: {
           contains: key,
-        }
-      }
-    })
-    return users
+        },
+      },
+    });
+    return users;
   }
 }

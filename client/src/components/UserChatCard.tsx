@@ -26,15 +26,18 @@ export default function Chat({ chat }: Props) {
   const chatId = params.get("id");
   const socket = getSocket();
 
-  useEffect(() => {
-    if (chatId && chat.chatId === chatId) {
-      socket?.emit("setChat", chat.userId, user?.id);
-      dispatch(setCurrChat(chat));
-    }
-  }, [chatId]);
+  // useEffect(() => {
+  //   if (chatId && chat.chatId === chatId) {
+  //     socket?.emit("setChat", chat.userId, user?.id);
+  //     dispatch(setCurrChat(chat));
+  //   }
+  // }, [chatId]);
 
   const setChat = async () => {
-    navigate(`/chat?id=${chat.chatId}`);
+    if (currChat) {
+      if (currChat.userId === chat.userId) return;
+    }
+    dispatch(setCurrChat(chat));
   };
 
   return (

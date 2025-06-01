@@ -2,7 +2,8 @@ import { privateAxios } from "@/lib/axios";
 import { TSendMessage } from "@/validators/chat";
 
 export const fetchChatsApi = async () => {
-  return privateAxios.get("/chats");
+  const response = await privateAxios.get("/chats");
+  return response.data;
 };
 
 export const fetchChatMessagesApi = async (chatId: string) => {

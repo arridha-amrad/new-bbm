@@ -8,7 +8,6 @@ export type TUser = {
   email: string;
   imageURL: string;
   createdAt: Date;
-  updatedAt: Date;
 };
 
 export interface AuthState {

@@ -13,13 +13,15 @@ export default function Search() {
   const dispatch = useDispatch();
   const [key, setKey] = useState("");
   const [value] = useDebounce(key, 500);
+
   useEffect(() => {
     if (!!value) {
       searchUserApi(value).then(({ data }) => {
-        dispatch(setSearchResult(data));
+        dispatch(setSearchResult(data.users));
       });
     }
   }, [value]);
+
   return (
     <Box
       sx={{

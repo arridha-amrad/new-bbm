@@ -11,7 +11,7 @@ import Banner from "./components/Banner";
 import EditProfile from "./components/EditProfile";
 import { useSocket } from "./hooks/useSocket";
 import Layout from "./Layout";
-import { homeLoader, rootLoader } from "./loaders";
+import { homeLoader } from "./loaders";
 import Chat from "./pages/Chat";
 import Account from "./pages/Contact";
 import Home from "./pages/Home";
@@ -29,7 +29,6 @@ const router = createBrowserRouter([
   {
     path: "/",
     Component: Layout,
-    loader: rootLoader,
     children: [
       {
         path: "",

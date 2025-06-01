@@ -25,6 +25,7 @@ export default function LoginPage() {
   const [isShowPassword, setIsShowPassword] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
@@ -36,10 +37,8 @@ export default function LoginPage() {
   const onSubmit = handleSubmit(async (data) => {
     try {
       const res = await loginApi(data);
-      if (res.status < 400) {
-        setToken(res.data.token);
-        navigate("/");
-      }
+      setToken(res.data.accessToken);
+      navigate("/");
     } catch (err: any) {
       console.log(err);
       const errMessage = err.response.data.message;
@@ -48,6 +47,7 @@ export default function LoginPage() {
       }
     }
   });
+
   return (
     <Container maxWidth="xs">
       <Stack

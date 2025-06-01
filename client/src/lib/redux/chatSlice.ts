@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { TMessage } from "./messageSlice";
+import { TUSerSearch } from "./userSlice";
 
 export type TChat = {
   chatName: string | null;
@@ -39,13 +40,25 @@ export const chatSlice = createSlice({
           new Date(a.latestMessageDate!).getTime()
       );
     },
-    addChat: (state, action: PayloadAction<TChat>) => {
-      const newChat = action.payload;
+    addChat: (state, action: PayloadAction<TUSerSearch>) => {
+      const { imageURL, username, id } = action.payload;
+      const newChat: TChat = {
+        imageURL,
+        username,
+        userId: id,
+        chatName: null,
+        lastMessage: "",
+        chatId: null,
+        totalNotification: 0,
+        latestMessageDate: null,
+        isTyping: false,
+        onlineStatus: "",
+      };
       const isChatExists = state.chats.find((c) => c.userId === newChat.userId);
       if (!isChatExists) {
-        state.chats.unshift(action.payload);
+        state.chats.unshift(newChat);
       }
-      state.currChat = action.payload;
+      state.currChat = newChat;
     },
     updateCurrChatOnlineStatus: (state, action: PayloadAction<string>) => {
       const currChat = state.currChat;

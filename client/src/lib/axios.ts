@@ -2,20 +2,20 @@ import axios from "axios";
 import { refreshTokenApi } from "@/api/auth";
 
 let accToken: string | null = null;
-export const setToken = (newToken: string) => (accToken = newToken);
+export const setToken = (newToken: string) => (accToken = `Bearer ${newToken}`);
 export const getToken = () => accToken;
 export const publicAxios = axios.create({
   baseURL: `${import.meta.env.VITE_SERVER_URL}/api`,
   withCredentials: true,
 });
+
 export const privateAxios = axios.create({
   baseURL: `${import.meta.env.VITE_SERVER_URL}/api`,
   withCredentials: true,
 });
 privateAxios.interceptors.request.use(
   (config) => {
-    const token = getToken();
-    config.headers["Authorization"] = token;
+    config.headers["Authorization"] = accToken;
     return config;
   },
   (error) => {
@@ -30,16 +30,22 @@ privateAxios.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
     // Check if the error is due to an expired token
-    if (error.response.status === 401 && !originalRequest._retry) {
+    if (
+      error.response.status === 401 &&
+      error.response.data.message === "Token expired" &&
+      !originalRequest._retry
+    ) {
       originalRequest._retry = true; // Avoid infinite loop
       // Step 4: Request a new token with the refresh token
       try {
         const res = await refreshTokenApi();
-        const newToken = res.data.token;
+        console.log("refresh token response : ", res);
+
+        const newToken = res.data.accessToken;
         // Store the new token
         setToken(newToken);
         // Update the Authorization header and retry the original request
-        originalRequest.headers["Authorization"] = newToken;
+        originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
         return privateAxios(originalRequest);
       } catch (refreshError) {
         // Optionally handle failure to refresh the token, e.g., logout the user

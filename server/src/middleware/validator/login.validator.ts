@@ -1,6 +1,6 @@
-import { NextFunction, Request, Response } from 'express';
-import { z } from 'zod';
-import { formatZodErrors, messages } from './helper.validator';
+import { NextFunction, Request, Response } from "express";
+import { z } from "zod";
+import { formatZodErrors, messages } from "./helper.validator";
 
 export const schema = z.object({
   identity: z
@@ -10,9 +10,9 @@ export const schema = z.object({
       (val) => /\S+@\S+\.\S+/.test(val) || /^[a-zA-Z0-9._]{3,}$/.test(val),
       {
         message: messages.identityInvalid,
-      },
+      }
     ),
-  password: z.string().min(6, messages.pwdLogin),
+  password: z.string(),
 });
 
 export type LoginInput = z.infer<typeof schema>;
@@ -20,7 +20,7 @@ export type LoginInput = z.infer<typeof schema>;
 export const validateLoginInput = (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const validation = schema.safeParse(req.body);
   if (!validation.success) {

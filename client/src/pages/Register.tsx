@@ -35,10 +35,8 @@ export default function RegisterPage() {
   const onSubmit = handleSubmit(async (data) => {
     try {
       const res = await registerApi(data);
-      if (res.status < 400) {
-        setToken(res.data.token);
-        navigate("/");
-      }
+      setToken(res.data.accessToken);
+      navigate("/");
     } catch (err: any) {
       const errMessage = err.response.data.message;
       if (errMessage) {
@@ -76,9 +74,9 @@ export default function RegisterPage() {
               Messenger
             </Typography>
           </Box>
-          <Paper sx={{ padding: "3rem 2rem", borderRadius: "0.5rem" }}>
+          <Paper sx={{ padding: "2rem", borderRadius: "0.5rem" }}>
             <form onSubmit={onSubmit}>
-              <Stack gap={4} direction="column">
+              <Stack gap={3} direction="column">
                 {!!error && (
                   <Alert onClose={() => setError("")} severity="error">
                     {error}
@@ -104,6 +102,16 @@ export default function RegisterPage() {
                   error={!!errors.username}
                   helperText={errors.username?.message}
                   {...register("username")}
+                />
+                <TextField
+                  id="register-imageUrl"
+                  label="image url"
+                  fullWidth
+                  disabled={isLoading}
+                  variant="outlined"
+                  error={!!errors.imageURL}
+                  helperText={errors.imageURL?.message}
+                  {...register("imageURL")}
                 />
                 <Box>
                   <TextField

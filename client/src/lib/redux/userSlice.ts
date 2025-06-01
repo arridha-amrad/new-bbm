@@ -6,6 +6,7 @@ export type TUSerSearch = {
   username: string;
   email: string;
   imageURL: string;
+  createdAt: Date;
 };
 
 export interface AuthState {

@@ -6,16 +6,18 @@ export const fetchChats = async (
   res: Response,
   next: NextFunction
 ) => {
-  const userId = req.user?.id
-  const chatService = new ChatService()
+  const userId = req.user?.id;
+  console.log("reach here");
+
+  const chatService = new ChatService();
   try {
     if (!userId) {
-      res.sendStatus(401)
-      return
+      res.sendStatus(401);
+      return;
     }
-    const chats = await chatService.fetchChatsByUserId(userId)
+    const chats = await chatService.fetchChatsByUserId(userId);
     res.status(200).json({ chats });
-    return
+    return;
   } catch (err) {
     next(err);
   }
