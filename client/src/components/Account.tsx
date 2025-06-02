@@ -27,7 +27,10 @@ export default function Account() {
       }}
     >
       <Stack gap={2} alignItems="center" direction={"row"}>
-        <Avatar src={user?.imageURL} sx={{ width: 56, height: 56 }} />
+        <Avatar
+          src={user?.imageURL ?? undefined}
+          sx={{ width: 56, height: 56 }}
+        />
         <Stack width="100%" direction={"column"}>
           <Typography fontWeight={"700"}>{user?.username}</Typography>
           <Typography color="textSecondary">{user?.email}</Typography>

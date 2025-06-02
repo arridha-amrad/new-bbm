@@ -1,5 +1,5 @@
-import Chats from "@/components/Chats";
-import Search from "@/components/Search";
+import Chats from "@/components/RecentChats";
+import Search from "@/components/SearchUserInput";
 import { PersonAdd } from "@mui/icons-material";
 import IconButton from "@mui/material/IconButton";
 import Box from "@mui/material/Box";

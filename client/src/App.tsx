@@ -8,7 +8,7 @@ import { Route, Routes } from "react-router-dom";
 import AuthLayout from "./layout/AuthLayout";
 import RequireAuthLayout from "./layout/RequireAuthLayout";
 import ChatPage from "./pages/ChatPage";
-import HomePage from "./pages/HomePage";
+import HomePage from "./layout/ChatLayout";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import Banner from "./components/Banner";
@@ -22,13 +22,12 @@ const darkTheme = createTheme({
 });
 
 export default function App() {
-
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
       <Routes>
         <Route element={<RequireAuthLayout />}>
-          <Route element={<HomePage />} >
+          <Route element={<HomePage />}>
             <Route index element={<Banner />} />
             <Route path="/chat" element={<ChatPage />} />
           </Route>

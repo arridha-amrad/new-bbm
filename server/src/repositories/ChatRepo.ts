@@ -55,8 +55,10 @@ export default class ChatRepo {
       id: chat.id,
       name: chat.name,
       participants: chat.participants.map((p) => p.user),
-      message: chat.messages[0].content,
-      messageDate: chat.messages[0].sentAt,
+      message: {
+        content: chat.messages[0].content,
+        date: chat.messages[0].sentAt,
+      },
     }));
   }
 }

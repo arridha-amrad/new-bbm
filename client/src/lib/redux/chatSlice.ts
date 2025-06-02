@@ -1,26 +1,28 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import { TMessage } from "./messageSlice";
-import { TUSerSearch } from "./userSlice";
+import { TSearchUserResultFromApi } from "@/api/user.api";
+import { TFetchChatFromApi, TFetchMessageFromApi } from "@/api/chat.api";
 
 export type TChat = {
-  id: number;
+  id: number | null;
   name: string | null;
-  participants: {
+  receivers: {
     id: number;
     username: string;
     imageURL: string | null;
   }[];
-  message: string;
-  messageDate: Date;
+  message: {
+    content: string;
+    date: Date | null;
+  };
 };
 
-export interface AuthState {
+export interface ChatState {
   chats: TChat[];
   currChat: TChat | null;
 }
 
-const initialState: AuthState = {
+const initialState: ChatState = {
   chats: [],
   currChat: null,
 };
@@ -35,49 +37,63 @@ export const chatSlice = createSlice({
     setChats: (state, action: PayloadAction<TChat[]>) => {
       state.chats = action.payload.sort(
         (a, b) =>
-          new Date(b.latestMessageDate!).getTime() -
-          new Date(a.latestMessageDate!).getTime()
+          new Date(b.message.date ?? new Date()).getTime() -
+          new Date(a.message.date ?? new Date()).getTime()
       );
     },
-    addChat: (state, action: PayloadAction<TUSerSearch>) => {
-      const { imageURL, username, id } = action.payload;
+    initNewChat: (state, action: PayloadAction<TSearchUserResultFromApi[]>) => {
       const newChat: TChat = {
-        imageURL,
-        username,
-        receiverIds: [id],
-        chatName: null,
-        lastMessage: "",
-        chatId: null,
-        totalNotification: 0,
-        latestMessageDate: null,
-        isTyping: false,
-        onlineStatus: "",
+        id: null,
+        name: null,
+        message: {
+          content: "",
+          date: null,
+        },
+        receivers: action.payload,
       };
-      const isChatExists = state.chats.find((c) => c.chatId === newChat.chatId);
-      if (!isChatExists) {
-        state.chats.unshift(newChat);
-      }
+      state.chats.unshift(newChat);
       state.currChat = newChat;
     },
-    updateCurrChatOnlineStatus: (state, action: PayloadAction<string>) => {
-      const currChat = state.currChat;
-      if (currChat) {
-        currChat.onlineStatus = action.payload;
-      }
-    },
-    updateCurrChatIsTyping: (state, action: PayloadAction<boolean>) => {
-      const currChat = state.currChat;
-      if (currChat) {
-        currChat.isTyping = action.payload;
-      }
-    },
-    updateCurrChat: (state, action: PayloadAction<TMessage>) => {
+    // addNewChat: (state, action: PayloadAction<TUSerSearch>) => {
+    //   const { imageURL, username, id } = action.payload;
+    //   const newChat: TChat = {
+    //     chatName: null,
+    //     lastMessage: "",
+    //     chatId: null,
+    //     totalNotification: 0,
+    //     latestMessageDate: null,
+    //     isTyping: false,
+    //     onlineStatus: "",
+    //   };
+    //   const isChatExists = state.chats.find((c) => c.chatId === newChat.chatId);
+    //   if (!isChatExists) {
+    //     state.chats.unshift(newChat);
+    //   }
+    //   state.currChat = newChat;
+    // },
+    // updateCurrChatOnlineStatus: (state, action: PayloadAction<string>) => {
+    //   const currChat = state.currChat;
+    //   if (currChat) {
+    //     currChat.onlineStatus = action.payload;
+    //   }
+    // },
+    // updateCurrChatIsTyping: (state, action: PayloadAction<boolean>) => {
+    //   const currChat = state.currChat;
+    //   if (currChat) {
+    //     currChat.isTyping = action.payload;
+    //   }
+    // },
+    updateCurrChat: (state, action: PayloadAction<TFetchMessageFromApi>) => {
       const { sentAt, chatId, content } = action.payload;
-      const idx = state.chats.findIndex((c) => c.chatId === chatId);
+      if (state.currChat) {
+        state.currChat.id = chatId;
+      }
+      const idx = state.chats.findIndex((c) => c.id === chatId);
       if (idx < 0) return;
       const currChat = state.chats[idx];
-      currChat.lastMessage = content;
-      currChat.latestMessageDate = sentAt;
+      currChat.id = chatId;
+      currChat.message.content = content;
+      currChat.message.date = sentAt;
       state.chats.splice(idx, 1);
       state.chats.unshift(currChat);
     },
@@ -86,10 +102,10 @@ export const chatSlice = createSlice({
 
 export const {
   setChats,
-  addChat,
   setCurrChat,
   updateCurrChat,
-  updateCurrChatOnlineStatus,
-  updateCurrChatIsTyping,
+  initNewChat,
+  // updateCurrChatOnlineStatus,
+  // updateCurrChatIsTyping,
 } = chatSlice.actions;
 export const chatReducer = chatSlice.reducer;

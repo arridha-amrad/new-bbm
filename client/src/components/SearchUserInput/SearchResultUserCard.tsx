@@ -1,6 +1,7 @@
-import { addChat } from "@/lib/redux/chatSlice";
+import { TSearchUserResultFromApi } from "@/api/user.api";
+import { initNewChat } from "@/lib/redux/chatSlice";
 import { RootState } from "@/lib/redux/store";
-import { offSearch, TUSerSearch } from "@/lib/redux/userSlice";
+import { offSearch } from "@/lib/redux/userSlice";
 import Avatar from "@mui/material/Avatar";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
@@ -10,30 +11,43 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 type Props = {
-  user: TUSerSearch;
+  user: TSearchUserResultFromApi;
   setChatError: Dispatch<SetStateAction<string>>;
 };
 
-const User = ({ user, setChatError }: Props) => {
+const SearchResultUserCard = ({ user, setChatError }: Props) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user: authUser } = useSelector((state: RootState) => state.auth);
   const { chats } = useSelector((state: RootState) => state.chat);
 
+  // const addToChats = () => {
+  //   const isAlreadyChat = chats.find(
+  //     (c) => c.receivers.filter((r) => r.id !== authUser?.id)[0] === user.id
+  //   );
+  //   if (isAlreadyChat) {
+  //     navigate(`/chat?id=${isAlreadyChat.id}`);
+  //   } else {
+  //     if (user.id !== authUser?.id) {
+  //       dispatch(initNewChat(user));
+  //       navigate(`/chat`);
+  //     } else {
+  //       setChatError("You cannot chat with your own account");
+  //     }
+  //   }
+  //   dispatch(offSearch());
+  // };
+
   const addToChats = () => {
-    const isAlreadyChat = chats.find((c) => c.userId === user.id);
-    if (isAlreadyChat) {
-      navigate(`/chat?id=${isAlreadyChat.chatId}`);
-    } else {
-      if (user.id !== authUser?.id) {
-        dispatch(addChat(user));
-        navigate(`/chat`);
-      } else {
-        setChatError("You cannot chat with your own account");
-      }
+    if (user.id === authUser?.id) {
+      setChatError("You cannot chat with your own account");
+      return;
     }
+    navigate("/chat");
+    dispatch(initNewChat([user]));
     dispatch(offSearch());
   };
+
   return (
     <Paper
       onClick={addToChats}
@@ -46,7 +60,10 @@ const User = ({ user, setChatError }: Props) => {
       }}
     >
       <Stack gap={2} alignItems="center" direction={"row"}>
-        <Avatar src={user?.imageURL} sx={{ width: 56, height: 56 }} />
+        <Avatar
+          src={user?.imageURL ?? undefined}
+          sx={{ width: 56, height: 56 }}
+        />
         <Stack width="100%" direction={"column"}>
           <Typography fontWeight={"700"}>{user?.username}</Typography>
           <Typography color="textSecondary">{user?.email}</Typography>
@@ -56,4 +73,4 @@ const User = ({ user, setChatError }: Props) => {
   );
 };
 
-export default User;
+export default SearchResultUserCard;

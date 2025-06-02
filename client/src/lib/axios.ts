@@ -1,8 +1,9 @@
 import axios from "axios";
-import { refreshTokenApi } from "@/api/auth";
+import { refreshTokenApi } from "@/api/auth.api";
 
 let accToken: string | null = null;
-export const setAccessToken = (newToken: string) => (accToken = `Bearer ${newToken}`);
+export const setAccessToken = (newToken: string) =>
+  (accToken = `Bearer ${newToken}`);
 export const getAccessToken = () => accToken;
 
 export const publicAxios = axios.create({

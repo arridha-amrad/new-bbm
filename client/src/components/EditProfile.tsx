@@ -1,4 +1,4 @@
-import { editProfileApi } from "@/api/user";
+import { editProfileApi } from "@/api/user.api";
 import { updateAuth } from "@/lib/redux/authSlice";
 import { RootState } from "@/lib/redux/store";
 import { TEditProfile, editProfileSchema } from "@/validators/user";

@@ -1,4 +1,4 @@
-import { searchUserApi } from "@/api/user";
+import { searchUserApi } from "@/api/user.api";
 import { offSearch, setSearchResult } from "@/lib/redux/userSlice";
 import Clear from "@mui/icons-material/Clear";
 import SearchOutlined from "@mui/icons-material/SearchOutlined";

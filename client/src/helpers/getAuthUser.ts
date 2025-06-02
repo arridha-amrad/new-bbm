@@ -1,4 +1,4 @@
-import { meApi, refreshTokenApi } from "@/api/auth";
+import { meApi, refreshTokenApi } from "@/api/auth.api";
 import { getAccessToken, setAccessToken } from "@/lib/axios";
 
 export const getAuthUser = async () => {

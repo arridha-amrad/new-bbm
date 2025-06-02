@@ -10,11 +10,13 @@ export default function ChatUser() {
 
   return (
     <Stack alignItems={"center"} direction={"row"} gap={1} py={1} px={2}>
-      <Avatar src={currChat?.imageURL} />
+      <Avatar src={currChat?.receivers[0].imageURL ?? undefined} />
       <Stack direction={"column"} justifyContent={"center"}>
-        <Typography fontWeight={"700"}>{currChat?.username}</Typography>
+        <Typography fontWeight={"700"}>
+          {currChat?.receivers[0].username}
+        </Typography>
         <Typography variant="body2" color="textDisabled" fontStyle={"italic"}>
-          {currChat.isTyping ? "Typing..." : currChat.onlineStatus}
+          {/* {currChat.isTyping ? "Typing..." : currChat.onlineStatus} */}
         </Typography>
       </Stack>
     </Stack>

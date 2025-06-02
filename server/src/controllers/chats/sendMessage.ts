@@ -2,29 +2,37 @@ import { SendMessageInput } from "@/middleware/validator/sendMessage.validator";
 import ChatService from "@/services/ChatService";
 import { NextFunction, Request, Response } from "express";
 
-export const send = async (req: Request, res: Response, next: NextFunction) => {
+export const sendMessage = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const userId = req.user?.id;
   const { content, receiverIds, sentAt } = req.body as SendMessageInput;
-  let { chatId } = req.body as SendMessageInput
+  let { chatId } = req.body as SendMessageInput;
 
-  const chatService = new ChatService()
+  const chatService = new ChatService();
 
   try {
     if (!userId) {
-      res.sendStatus(401)
-      return
+      res.sendStatus(401);
+      return;
     }
 
     if (!chatId) {
-      const newChat = await chatService.initChat()
+      const newChat = await chatService.initChat();
       chatId = newChat.id;
-      await chatService.addChatParticipants(chatId, [...receiverIds, userId])
+      await chatService.addChatParticipants(chatId, [...receiverIds, userId]);
     }
 
-    const message = await chatService.saveMessage(chatId, content, sentAt, userId);
+    const message = await chatService.saveMessage(
+      chatId,
+      content,
+      sentAt,
+      userId
+    );
     res.status(201).json({ message });
-    return
-
+    return;
   } catch (err) {
     next(err);
   }

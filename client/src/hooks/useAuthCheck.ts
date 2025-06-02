@@ -7,9 +7,9 @@ import { useNavigate } from "react-router-dom";
 export const useAuthCheck = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
-  const ref = useRef(false)
+  const ref = useRef(false);
 
   useEffect(() => {
     if (ref.current) return;
@@ -17,7 +17,7 @@ export const useAuthCheck = () => {
     const verify = async () => {
       try {
         const user = await getAuthUser();
-        dispatch(setAuth(user))
+        dispatch(setAuth(user));
       } catch {
         navigate("/login", { replace: true });
       } finally {

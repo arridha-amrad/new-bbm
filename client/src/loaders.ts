@@ -1,7 +1,7 @@
-import { meApi, refreshTokenApi } from "@/api/auth";
+import { meApi, refreshTokenApi } from "@/api/auth.api";
 import { getToken, setToken } from "@/lib/axios";
 import { redirect } from "react-router-dom";
-import { fetchChatsApi } from "./api/chat";
+import { fetchChatsApi } from "./api/chat.api";
 
 export type THomeLoader = Awaited<ReturnType<typeof homeLoader>>;
 export const homeLoader = async () => {

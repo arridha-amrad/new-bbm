@@ -1,7 +1,6 @@
 import { formatClock } from "@/helpers/formatClock";
 import { setCurrChat, TChat } from "@/lib/redux/chatSlice";
 import { RootState } from "@/lib/redux/store";
-import { getSocket } from "@/lib/socket";
 import { CardActionArea } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import Badge from "@mui/material/Badge";
@@ -21,7 +20,7 @@ export default function Chat({ chat }: Props) {
   const { user } = useSelector((state: RootState) => state.auth);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const clock = formatClock(chat.latestMessageDate ?? new Date());
+  const clock = formatClock(chat.message.date ?? new Date());
   const [params] = useSearchParams();
 
   // useEffect(() => {
@@ -33,7 +32,7 @@ export default function Chat({ chat }: Props) {
 
   const setChat = async () => {
     dispatch(setCurrChat(chat));
-    navigate("/chat")
+    navigate("/chat");
   };
 
   return (
@@ -46,17 +45,20 @@ export default function Chat({ chat }: Props) {
         }}
       >
         <Stack gap={2} alignItems="center" direction={"row"}>
-          <Avatar src={chat.imageURL} sx={{ width: 56, height: 56 }} />
+          <Avatar
+            src={chat.receivers[0].imageURL ?? undefined}
+            sx={{ width: 56, height: 56 }}
+          />
           <Stack width="100%" direction={"column"}>
             <Typography
               color={
-                currChat?.username === chat.username
+                currChat?.receivers[0].username === chat.receivers[0].username
                   ? "textPrimary"
                   : "textDisabled"
               }
               fontWeight={"700"}
             >
-              {chat.username}
+              {chat.receivers[0].username}
             </Typography>
             <Typography
               color="textSecondary"
@@ -68,12 +70,12 @@ export default function Chat({ chat }: Props) {
                 textOverflow: "ellipsis",
               }}
             >
-              {chat.lastMessage}
+              {chat.message.content}
             </Typography>
           </Stack>
           <Stack gap={2} direction={"column"}>
             <Typography color="textDisabled">{clock}</Typography>
-            {chat.totalNotification > 0 && (
+            {/* {chat.totalNotification > 0 && (
               <Badge
                 sx={{ mr: 2 }}
                 badgeContent={chat.totalNotification}
@@ -82,7 +84,7 @@ export default function Chat({ chat }: Props) {
                 }}
                 color="info"
               />
-            )}
+            )} */}
           </Stack>
         </Stack>
       </CardActionArea>

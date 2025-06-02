@@ -1,4 +1,4 @@
-import { sendMessageApi } from "@/api/chat";
+import { sendMessageApi, TFetchMessageFromApi } from "@/api/chat.api";
 import useClickOutside from "@/hooks/useClickOutside";
 import { updateCurrChat } from "@/lib/redux/chatSlice";
 import { addMessage } from "@/lib/redux/messageSlice";
@@ -58,8 +58,7 @@ export default function CreateMessageForm() {
     }
   };
 
-  const handleOnBlur = () => {
-  };
+  const handleOnBlur = () => {};
 
   const handleTextChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -73,20 +72,26 @@ export default function CreateMessageForm() {
     e.preventDefault();
     if (!currChat) return;
     const audio = new Audio(SentAudio);
-    const sentAt = new Date().toISOString()
+    const sentAt = new Date().toISOString();
     try {
-      const { data } = await sendMessageApi({
+      const {
+        data: { message },
+      } = await sendMessageApi({
         sentAt,
         content: text,
-        receiverIds: currChat.receiverIds,
-        chatId: currChat.chatId
+        receiverIds: currChat.receivers.map((r) => r.id),
+        chatId: currChat.id,
       });
-      if (currChat.chatId === null) {
-        setParams({ id: data.message.chatId });
-      }
+      // if (currChat.chatId === null) {
+      //   setParams({ id: data.message.chatId });
+      // }
       await audio.play();
-      dispatch(updateCurrChat(data.message));
-      dispatch(addMessage(data.message));
+      dispatch(updateCurrChat(message));
+      const transformedMessage: TFetchMessageFromApi = {
+        ...message,
+        readers: [],
+      };
+      dispatch(addMessage(transformedMessage));
       setText("");
     } catch (error) {
       console.log(error);

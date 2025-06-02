@@ -25,8 +25,35 @@ export default class MessageRepo {
       where: {
         chatId,
       },
+      include: {
+        readers: {
+          include: {
+            reader: {
+              select: {
+                id: true,
+                username: true,
+                imageURL: true,
+                email: true,
+                createdAt: true,
+              },
+            },
+          },
+        },
+      },
     });
-    return result;
+    const messages = result.map((data) => {
+      return {
+        id: data.id,
+        chatId: data.chatId,
+        content: data.content,
+        sentAt: data.sentAt,
+        userId: data.userId,
+        readers: data.readers.map((r) => ({
+          ...r.reader,
+        })),
+      };
+    });
+    return messages;
   }
 
   async deleteOne(id: number) {

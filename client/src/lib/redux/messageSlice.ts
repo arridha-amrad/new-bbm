@@ -1,17 +1,9 @@
+import { TFetchMessageFromApi } from "@/api/chat.api";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
-export type TMessage = {
-  id: number;
-  chatId: string | null;
-  content: string;
-  sentAt: Date;
-  userId: string;
-  readers: string[];
-};
-
 export interface MessageState {
-  messages: TMessage[];
+  messages: TFetchMessageFromApi[];
   justReadMessageIds: number[];
 }
 
@@ -24,10 +16,10 @@ export const messageSlice = createSlice({
   name: "messages",
   initialState,
   reducers: {
-    setMessages: (state, action: PayloadAction<TMessage[]>) => {
+    setMessages: (state, action: PayloadAction<TFetchMessageFromApi[]>) => {
       state.messages = action.payload;
     },
-    addMessage: (state, action: PayloadAction<TMessage>) => {
+    addMessage: (state, action: PayloadAction<TFetchMessageFromApi>) => {
       state.messages.push(action.payload);
     },
     addJustReadMessageIds: (state, action: PayloadAction<number>) => {

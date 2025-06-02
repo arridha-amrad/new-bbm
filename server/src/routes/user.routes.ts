@@ -1,5 +1,5 @@
 import { edit } from "@/controllers/user/edit";
-import search from "@/controllers/user/search";
+import search from "@/controllers/user/searchUser.controller";
 import { protectedRoute } from "@/middleware/protectedRoute";
 import { validateSearchUserInput } from "@/middleware/validator/searchUser.validator";
 import { validateUpdateUserInput } from "@/middleware/validator/updateUser.validator";

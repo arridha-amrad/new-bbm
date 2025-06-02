@@ -14,7 +14,7 @@ import Layout from "./Layout";
 import { homeLoader } from "./loaders";
 import Chat from "./pages/Chat";
 import Account from "./pages/Contact";
-import Home from "./pages/HomePage";
+import Home from "./layout/ChatLayout";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/SignupPage";
 import Settings from "./pages/Settings";

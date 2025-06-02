@@ -1,20 +1,13 @@
+import { TSearchUserResultFromApi } from "@/api/user.api";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
-export type TUSerSearch = {
-  id: number;
-  username: string;
-  email: string;
-  imageURL: string;
-  createdAt: Date;
-};
-
-export interface AuthState {
-  searchResult: TUSerSearch[];
+export interface UserState {
+  searchResult: TSearchUserResultFromApi[];
   searchActive: boolean;
 }
 
-const initialState: AuthState = {
+const initialState: UserState = {
   searchResult: [],
   searchActive: false,
 };
@@ -26,7 +19,10 @@ export const userSlice = createSlice({
     offSearch: (state) => {
       state.searchActive = false;
     },
-    setSearchResult: (state, action: PayloadAction<TUSerSearch[]>) => {
+    setSearchResult: (
+      state,
+      action: PayloadAction<TSearchUserResultFromApi[]>
+    ) => {
       state.searchResult = action.payload;
       state.searchActive = true;
     },

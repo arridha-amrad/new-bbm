@@ -7,8 +7,6 @@ export const fetchChats = async (
   next: NextFunction
 ) => {
   const userId = req.user?.id;
-  console.log("reach here");
-
   const chatService = new ChatService();
   try {
     if (!userId) {

@@ -1,4 +1,4 @@
-import { loginApi } from "@/api/auth";
+import { loginApi } from "@/api/auth.api";
 import { setAccessToken } from "@/lib/axios";
 import { loginSchema, TLogin } from "@/validators/auth";
 import { zodResolver } from "@hookform/resolvers/zod";

@@ -5,7 +5,7 @@ import MyMessage from "./MyMessage";
 import OtherMessage from "./OtherMessage";
 import { useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
-import { fetchChatMessagesApi } from "@/api/chat";
+import { fetchChatMessagesApi } from "@/api/chat.api";
 import { setMessages } from "@/lib/redux/messageSlice";
 import { useDebounce } from "use-debounce";
 
@@ -14,7 +14,7 @@ export default function Messages() {
     (state: RootState) => state.message
   );
   const { user } = useSelector((state: RootState) => state.auth);
-  const { currChat } = useSelector((state: RootState) => state.chat)
+  const { currChat } = useSelector((state: RootState) => state.chat);
 
   const ref = useRef<HTMLDivElement | null>(null);
 
@@ -32,14 +32,14 @@ export default function Messages() {
   }, [values]);
 
   useEffect(() => {
-    if (currChat?.chatId) {
-      fetchChatMessagesApi(currChat.chatId).then(({ data }) => {
+    if (currChat?.id) {
+      fetchChatMessagesApi(currChat.id).then(({ data }) => {
         dispatch(setMessages(data.messages));
       });
     } else {
       dispatch(setMessages([]));
     }
-  }, [currChat?.chatId]);
+  }, [currChat?.id]);
 
   useEffect(() => {
     ref.current?.scrollIntoView({ behavior: "instant" });

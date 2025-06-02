@@ -1,5 +1,5 @@
 import Account from "@/components/Account";
-import Search from "@/components/Search";
+import Search from "@/components/SearchUserInput";
 import TabBar from "@/components/TabBar";
 import { Button } from "@mui/material";
 import Box from "@mui/material/Box";
