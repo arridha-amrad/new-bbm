@@ -1,10 +1,11 @@
+import ModalCreateGroupChat from "@/components/ModalCreateGroupChat";
 import RecentChats from "@/components/RecentChats";
 import Search from "@/components/SearchUserInput";
 import SearchUserResult from "@/components/SearchUserInput/SearchUserResult";
 import TabBar from "@/components/TabBar";
 import useFetchUserChats from "@/hooks/useFetchUserChats";
 import { RootState } from "@/lib/redux/store";
-import { CreateOutlined } from "@mui/icons-material";
+import { CreateOutlined, Groups } from "@mui/icons-material";
 import { CircularProgress } from "@mui/material";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
@@ -37,9 +38,7 @@ export default function ChatLayout() {
             <Box display={"flex"} justifyContent="center" flex="1">
               <Typography fontWeight={"700"}>Chats</Typography>
             </Box>
-            <IconButton>
-              <CreateOutlined color="info" />
-            </IconButton>
+            <ModalCreateGroupChat />
           </Stack>
           <Search />
           {searchActive && searchResult.length > 0 ? (
