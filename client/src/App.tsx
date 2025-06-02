@@ -2,22 +2,18 @@ import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
-import { CircularProgress } from "@mui/material";
-import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
+import AuthLayout from "./layout/AuthLayout";
+import RequireAuthLayout from "./layout/RequireAuthLayout";
+import ChatPage from "./pages/ChatPage";
+import HomePage from "./pages/HomePage";
+import LoginPage from "./pages/LoginPage";
+import SignupPage from "./pages/SignupPage";
 import Banner from "./components/Banner";
-import EditProfile from "./components/EditProfile";
-import { useSocket } from "./hooks/useSocket";
-import Layout from "./Layout";
-import { homeLoader } from "./loaders";
-import Chat from "./pages/Chat";
-import Account from "./pages/Contact";
-import Home from "./pages/Home";
-import LoginPage from "./pages/Login";
-import RegisterPage from "./pages/Register";
-import Settings from "./pages/Settings";
+import { urls } from "./pages/urls";
+import SettingsPage from "./pages/Settings";
 
 const darkTheme = createTheme({
   palette: {
@@ -25,80 +21,24 @@ const darkTheme = createTheme({
   },
 });
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    Component: Layout,
-    children: [
-      {
-        path: "",
-        Component: Home,
-        loader: homeLoader,
-        children: [
-          {
-            path: "",
-            Component: Banner,
-          },
-          {
-            path: "chat",
-            Component: Chat,
-          },
-        ],
-      },
-      {
-        path: "contacts",
-        Component: Account,
-        children: [
-          {
-            path: "",
-            Component: Banner,
-          },
-        ],
-      },
-      {
-        path: "settings",
-        Component: Settings,
-        children: [
-          {
-            path: "",
-            Component: Banner,
-          },
-          {
-            path: "edit-profile",
-            Component: EditProfile,
-          },
-        ],
-      },
-    ],
-  },
-  {
-    path: "/login",
-    Component: LoginPage,
-  },
-  {
-    path: "/register",
-    Component: RegisterPage,
-  },
-]);
-
 export default function App() {
-  useSocket();
+
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
-      <RouterProvider
-        router={router}
-        fallbackElement={
-          <Box
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-            height="100vh"
-          >
-            <CircularProgress />
-          </Box>
-        }
-      />
+      <Routes>
+        <Route element={<RequireAuthLayout />}>
+          <Route element={<HomePage />} >
+            <Route index element={<Banner />} />
+            <Route path="/chat" element={<ChatPage />} />
+          </Route>
+          <Route path={urls.settings} element={<SettingsPage />} />
+        </Route>
+        <Route element={<AuthLayout />}>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+        </Route>
+      </Routes>
     </ThemeProvider>
   );
 }

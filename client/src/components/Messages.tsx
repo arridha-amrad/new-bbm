@@ -14,10 +14,11 @@ export default function Messages() {
     (state: RootState) => state.message
   );
   const { user } = useSelector((state: RootState) => state.auth);
+  const { currChat } = useSelector((state: RootState) => state.chat)
+
   const ref = useRef<HTMLDivElement | null>(null);
 
   const [params] = useSearchParams();
-  const chatId = params.get("id");
   const dispatch = useDispatch();
 
   const [values] = useDebounce(justReadMessageIds, 1000);
@@ -31,14 +32,14 @@ export default function Messages() {
   }, [values]);
 
   useEffect(() => {
-    if (chatId) {
-      fetchChatMessagesApi(chatId).then(({ data }) => {
-        dispatch(setMessages(data));
+    if (currChat?.chatId) {
+      fetchChatMessagesApi(currChat.chatId).then(({ data }) => {
+        dispatch(setMessages(data.messages));
       });
     } else {
       dispatch(setMessages([]));
     }
-  }, [chatId]);
+  }, [currChat?.chatId]);
 
   useEffect(() => {
     ref.current?.scrollIntoView({ behavior: "instant" });

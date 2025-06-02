@@ -8,7 +8,7 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { Outlet } from "react-router-dom";
 
-export default function Settings() {
+export default function SettingsPage() {
   return (
     <>
       <Box height={"inherit"} flex="1">

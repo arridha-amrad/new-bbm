@@ -4,7 +4,7 @@ import Messages from "@/components/Messages";
 import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
 
-export default function Chat() {
+export default function ChatPage() {
   return (
     <Stack display={"flex"} direction={"column"} height={"inherit"}>
       <ChatUser />

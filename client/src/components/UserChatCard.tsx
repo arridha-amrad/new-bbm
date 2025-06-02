@@ -23,8 +23,6 @@ export default function Chat({ chat }: Props) {
   const dispatch = useDispatch();
   const clock = formatClock(chat.latestMessageDate ?? new Date());
   const [params] = useSearchParams();
-  const chatId = params.get("id");
-  const socket = getSocket();
 
   // useEffect(() => {
   //   if (chatId && chat.chatId === chatId) {
@@ -34,10 +32,8 @@ export default function Chat({ chat }: Props) {
   // }, [chatId]);
 
   const setChat = async () => {
-    if (currChat) {
-      if (currChat.userId === chat.userId) return;
-    }
     dispatch(setCurrChat(chat));
+    navigate("/chat")
   };
 
   return (

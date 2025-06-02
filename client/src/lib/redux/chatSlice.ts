@@ -4,16 +4,15 @@ import { TMessage } from "./messageSlice";
 import { TUSerSearch } from "./userSlice";
 
 export type TChat = {
-  chatName: string | null;
-  userId: string;
-  username: string;
-  imageURL: string;
-  chatId: string | null;
-  lastMessage: string;
-  totalNotification: number;
-  latestMessageDate: Date | null;
-  isTyping: boolean | null;
-  onlineStatus: string | null;
+  id: number;
+  name: string | null;
+  participants: {
+    id: number;
+    username: string;
+    imageURL: string | null;
+  }[];
+  message: string;
+  messageDate: Date;
 };
 
 export interface AuthState {
@@ -45,7 +44,7 @@ export const chatSlice = createSlice({
       const newChat: TChat = {
         imageURL,
         username,
-        userId: id,
+        receiverIds: [id],
         chatName: null,
         lastMessage: "",
         chatId: null,
@@ -54,7 +53,7 @@ export const chatSlice = createSlice({
         isTyping: false,
         onlineStatus: "",
       };
-      const isChatExists = state.chats.find((c) => c.userId === newChat.userId);
+      const isChatExists = state.chats.find((c) => c.chatId === newChat.chatId);
       if (!isChatExists) {
         state.chats.unshift(newChat);
       }

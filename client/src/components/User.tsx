@@ -1,7 +1,6 @@
 import { addChat } from "@/lib/redux/chatSlice";
 import { RootState } from "@/lib/redux/store";
 import { offSearch, TUSerSearch } from "@/lib/redux/userSlice";
-import { getSocket } from "@/lib/socket";
 import Avatar from "@mui/material/Avatar";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
@@ -21,8 +20,6 @@ const User = ({ user, setChatError }: Props) => {
   const { user: authUser } = useSelector((state: RootState) => state.auth);
   const { chats } = useSelector((state: RootState) => state.chat);
 
-  const socket = getSocket();
-
   const addToChats = () => {
     const isAlreadyChat = chats.find((c) => c.userId === user.id);
     if (isAlreadyChat) {
@@ -31,7 +28,6 @@ const User = ({ user, setChatError }: Props) => {
       if (user.id !== authUser?.id) {
         dispatch(addChat(user));
         navigate(`/chat`);
-        socket?.emit("setChat", [user.id], authUser?.id, false);
       } else {
         setChatError("You cannot chat with your own account");
       }

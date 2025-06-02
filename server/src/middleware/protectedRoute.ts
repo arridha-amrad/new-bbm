@@ -12,7 +12,6 @@ export const protectedRoute = async (
     const tokenService = new TokenService();
     const authService = new AuthService();
     const authHeader = req.headers["authorization"];
-    console.log({ authHeader });
 
     if (!authHeader?.startsWith("Bearer ")) {
       throw new Error();
@@ -23,13 +22,9 @@ export const protectedRoute = async (
       throw new Error();
     }
 
-    console.log({ token });
-
     const { id, jwtVersion, jti } = (await tokenService.verifyJwt(
       token
     )) as TokenPayload;
-
-    console.log({ id, jti });
 
     if (!id || !jwtVersion || !jti) {
       throw new Error();
@@ -46,8 +41,6 @@ export const protectedRoute = async (
     };
     next();
   } catch (err) {
-    console.log(err);
-
     if (err instanceof JoseErrors.JWTExpired) {
       res.status(401).json({ message: "Token expired" });
     } else {

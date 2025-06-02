@@ -2,8 +2,9 @@ import axios from "axios";
 import { refreshTokenApi } from "@/api/auth";
 
 let accToken: string | null = null;
-export const setToken = (newToken: string) => (accToken = `Bearer ${newToken}`);
-export const getToken = () => accToken;
+export const setAccessToken = (newToken: string) => (accToken = `Bearer ${newToken}`);
+export const getAccessToken = () => accToken;
+
 export const publicAxios = axios.create({
   baseURL: `${import.meta.env.VITE_SERVER_URL}/api`,
   withCredentials: true,
@@ -43,7 +44,7 @@ privateAxios.interceptors.response.use(
 
         const newToken = res.data.accessToken;
         // Store the new token
-        setToken(newToken);
+        setAccessToken(newToken);
         // Update the Authorization header and retry the original request
         originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
         return privateAxios(originalRequest);

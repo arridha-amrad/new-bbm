@@ -3,10 +3,10 @@ import { TSendMessage } from "@/validators/chat";
 
 export const fetchChatsApi = async () => {
   const response = await privateAxios.get("/chats");
-  return response.data;
+  return response;
 };
 
-export const fetchChatMessagesApi = async (chatId: string) => {
+export const fetchChatMessagesApi = async (chatId: number) => {
   return privateAxios.get(`/chats/messages/${chatId}`);
 };
 

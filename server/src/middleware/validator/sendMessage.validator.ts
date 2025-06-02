@@ -9,8 +9,8 @@ export const schema = z.object({
       sanitizeHtml(val, { allowedTags: [], allowedAttributes: {} })
     ),
   receiverIds: z.number().array(),
-  chatId: z.number().optional(),
-  sentAt: z.date()
+  chatId: z.number().nullable(),
+  sentAt: z.string().transform((val) => new Date(val))
 });
 
 export type SendMessageInput = z.infer<typeof schema>;

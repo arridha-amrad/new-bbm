@@ -48,22 +48,13 @@ export default class ChatRepo {
               },
             },
           },
-          where: {
-            NOT: {
-              userId,
-            },
-          },
         },
       },
     });
     return result.map((chat) => ({
       id: chat.id,
       name: chat.name,
-      user: {
-        id: chat.participants[0].user.id,
-        username: chat.participants[0].user.username,
-        imageUrl: chat.participants[0].user.imageURL,
-      },
+      participants: chat.participants.map((p) => p.user),
       message: chat.messages[0].content,
       messageDate: chat.messages[0].sentAt,
     }));

@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
 export type TUSerSearch = {
-  id: string;
+  id: number;
   username: string;
   email: string;
   imageURL: string;

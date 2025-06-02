@@ -3,7 +3,6 @@ import useClickOutside from "@/hooks/useClickOutside";
 import { updateCurrChat } from "@/lib/redux/chatSlice";
 import { addMessage } from "@/lib/redux/messageSlice";
 import { RootState } from "@/lib/redux/store";
-import { getSocket } from "@/lib/socket";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import Add from "@mui/icons-material/Add";
@@ -26,13 +25,11 @@ export default function CreateMessageForm() {
   const dispatch = useDispatch();
   const { currChat } = useSelector((state: RootState) => state.chat);
 
-  const socket = getSocket();
-
   const [_, setParams] = useSearchParams();
-  const { domNodeRef: pickerRef } = useClickOutside(
-    () => setShowPicker(false),
-    inputRef
-  );
+  // const { domNodeRef: pickerRef } = useClickOutside(
+  //   () => setShowPicker(false),
+  //   inputRef
+  // );
 
   const handleEmojiSelect = (emoji: any) => {
     if ("native" in emoji) {
@@ -55,7 +52,6 @@ export default function CreateMessageForm() {
   };
 
   const updateCursorPosition = () => {
-    socket?.emit("typing", currChat?.userId);
     if (inputRef.current) {
       const currentPosition = inputRef.current.selectionStart ?? 0;
       setCursorPosition(currentPosition);
@@ -63,7 +59,6 @@ export default function CreateMessageForm() {
   };
 
   const handleOnBlur = () => {
-    socket?.emit("noTyping", currChat?.userId);
   };
 
   const handleTextChange = (
@@ -78,11 +73,13 @@ export default function CreateMessageForm() {
     e.preventDefault();
     if (!currChat) return;
     const audio = new Audio(SentAudio);
+    const sentAt = new Date().toISOString()
     try {
       const { data } = await sendMessageApi({
-        chatId: currChat?.chatId,
+        sentAt,
         content: text,
-        receiverId: currChat.userId,
+        receiverIds: currChat.receiverIds,
+        chatId: currChat.chatId
       });
       if (currChat.chatId === null) {
         setParams({ id: data.message.chatId });
@@ -90,8 +87,6 @@ export default function CreateMessageForm() {
       await audio.play();
       dispatch(updateCurrChat(data.message));
       dispatch(addMessage(data.message));
-      const socket = getSocket();
-      socket?.emit("sendMessage", data.message, currChat.userId);
       setText("");
     } catch (error) {
       console.log(error);
@@ -109,7 +104,7 @@ export default function CreateMessageForm() {
       alignItems={"end"}
     >
       {showPicker && (
-        <Box ref={pickerRef} position="absolute" bottom="100%" left={0}>
+        <Box position="absolute" bottom="100%" left={0}>
           <Picker data={data} onEmojiSelect={handleEmojiSelect} />
         </Box>
       )}
