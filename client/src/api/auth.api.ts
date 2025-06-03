@@ -36,5 +36,5 @@ export const meApi = async () => {
 };
 
 export const logoutApi = async () => {
-  return privateAxios.get("/auth/logout");
+  return privateAxios.post("/auth/logout");
 };

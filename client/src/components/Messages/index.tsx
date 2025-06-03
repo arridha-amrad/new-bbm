@@ -1,13 +1,13 @@
-import { RootState } from "@/lib/redux/store";
-import Stack from "@mui/material/Stack";
-import { useDispatch, useSelector } from "react-redux";
-import MyMessage from "./MyMessage";
-import OtherMessage from "./OtherMessage";
-import { useEffect, useRef } from "react";
-import { useSearchParams } from "react-router-dom";
 import { fetchChatMessagesApi } from "@/api/chat.api";
 import { setMessages } from "@/lib/redux/messageSlice";
+import { RootState } from "@/lib/redux/store";
+import Stack from "@mui/material/Stack";
+import { useEffect, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useSearchParams } from "react-router-dom";
 import { useDebounce } from "use-debounce";
+import MyMessage from "./MyMessage";
+import OtherMessage from "./OtherMessage";
 
 export default function Messages() {
   const { messages, justReadMessageIds } = useSelector(

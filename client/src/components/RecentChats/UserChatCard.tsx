@@ -1,7 +1,7 @@
 import { formatClock } from "@/helpers/formatClock";
 import { setCurrChat, TChat } from "@/lib/redux/chatSlice";
 import { RootState } from "@/lib/redux/store";
-import { CardActionArea } from "@mui/material";
+import { AvatarGroup, CardActionArea } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import Badge from "@mui/material/Badge";
 import Card from "@mui/material/Card";
@@ -17,7 +17,7 @@ type Props = {
 
 export default function Chat({ chat }: Props) {
   const { currChat } = useSelector((state: RootState) => state.chat);
-  const { user } = useSelector((state: RootState) => state.auth);
+  const { user: authUser } = useSelector((state: RootState) => state.auth);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const clock = formatClock(chat.message.date ?? new Date());
@@ -45,21 +45,25 @@ export default function Chat({ chat }: Props) {
         }}
       >
         <Stack gap={2} alignItems="center" direction={"row"}>
-          <Avatar
-            src={chat.receivers[0].imageURL ?? undefined}
-            sx={{ width: 56, height: 56 }}
-          />
+          <AvatarGroup spacing="small">
+            {chat.isGroup
+              ? chat.participants.map((p) => (
+                  <Avatar src={p.imageURL ?? undefined} alt={p.username} />
+                ))
+              : chat.participants
+                  .filter((p) => p.id !== authUser?.id)
+                  .map((u) => (
+                    <Avatar src={u.imageURL ?? undefined} alt={u.username} />
+                  ))}
+          </AvatarGroup>
           <Stack width="100%" direction={"column"}>
-            <Typography
-              color={
-                currChat?.receivers[0].username === chat.receivers[0].username
-                  ? "textPrimary"
-                  : "textDisabled"
-              }
-              fontWeight={"700"}
-            >
-              {chat.receivers[0].username}
-            </Typography>
+            {!chat.isGroup && (
+              <Typography>
+                {chat.participants
+                  .filter((p) => p.id !== authUser?.id)
+                  .map((p) => p.username)}
+              </Typography>
+            )}
             <Typography
               color="textSecondary"
               sx={{

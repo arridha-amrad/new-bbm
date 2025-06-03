@@ -8,8 +8,6 @@ import Chat from "./UserChatCard";
 export default function RecentChats() {
   const { chats } = useSelector((state: RootState) => state.chat);
 
-  console.log({ chats });
-
   return (
     <Stack flex="1" overflow={"auto"} direction={"column"}>
       <Divider textAlign="left">

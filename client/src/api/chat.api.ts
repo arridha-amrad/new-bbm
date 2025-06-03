@@ -4,6 +4,7 @@ import { TSendMessage } from "@/validators/chat";
 export type TFetchChatFromApi = {
   id: number;
   name: string | null;
+  isGroup: boolean;
   participants: {
     id: number;
     username: string;

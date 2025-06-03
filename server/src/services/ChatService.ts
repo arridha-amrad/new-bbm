@@ -45,8 +45,8 @@ export default class ChatService {
     return messages
   }
 
-  async initChat(name?: string) {
-    const newChat = await this.chatRepo.create(name)
+  async initChat({ isGroup, name }: { name?: string, isGroup?: boolean }) {
+    const newChat = await this.chatRepo.create({ isGroup, name })
     return newChat
   }
 

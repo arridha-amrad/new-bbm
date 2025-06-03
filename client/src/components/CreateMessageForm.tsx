@@ -1,10 +1,8 @@
 import { sendMessageApi, TFetchMessageFromApi } from "@/api/chat.api";
-import useClickOutside from "@/hooks/useClickOutside";
+import SentAudio from "@/assets/sent.mp3";
 import { updateCurrChat } from "@/lib/redux/chatSlice";
 import { addMessage } from "@/lib/redux/messageSlice";
 import { RootState } from "@/lib/redux/store";
-import data from "@emoji-mart/data";
-import Picker from "@emoji-mart/react";
 import Add from "@mui/icons-material/Add";
 import EmojiEmotions from "@mui/icons-material/EmojiEmotions";
 import Send from "@mui/icons-material/Send";
@@ -14,58 +12,36 @@ import InputBase from "@mui/material/InputBase";
 import Stack from "@mui/material/Stack";
 import { FormEvent, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useSearchParams } from "react-router-dom";
-import SentAudio from "@/assets/sent.mp3";
+import EmojiPicker from "./EmojiPicker";
 
 export default function CreateMessageForm() {
   const [text, setText] = useState<string>("");
   const [showPicker, setShowPicker] = useState<boolean>(false);
-  const [cursorPosition, setCursorPosition] = useState<number>(0);
   const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement | null>(null);
   const dispatch = useDispatch();
   const { currChat } = useSelector((state: RootState) => state.chat);
-
-  const [_, setParams] = useSearchParams();
-  // const { domNodeRef: pickerRef } = useClickOutside(
-  //   () => setShowPicker(false),
-  //   inputRef
-  // );
-
-  const handleEmojiSelect = (emoji: any) => {
-    if ("native" in emoji) {
-      const start = text.slice(0, cursorPosition);
-      const end = text.slice(cursorPosition);
-      const newText = start + emoji.native + end;
-      setText(newText);
-      const newCursorPosition = cursorPosition + emoji.native.length;
-      setCursorPosition(newCursorPosition);
-      setTimeout(() => {
-        if (inputRef.current) {
-          inputRef.current.setSelectionRange(
-            newCursorPosition,
-            newCursorPosition
-          );
-          inputRef.current.focus();
-        }
-      }, 0);
-    }
-  };
-
-  const updateCursorPosition = () => {
-    if (inputRef.current) {
-      const currentPosition = inputRef.current.selectionStart ?? 0;
-      setCursorPosition(currentPosition);
-    }
-  };
-
-  const handleOnBlur = () => {};
+  const { user: authUser } = useSelector((state: RootState) => state.auth);
+  const cursorPositionRef = useRef(0);
 
   const handleTextChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const target = e.target as HTMLInputElement | HTMLTextAreaElement;
     setText(target.value);
-    setCursorPosition(target.selectionStart ?? 0);
+  };
+
+  const handleCursorPosition = (
+    e: React.SyntheticEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const position = e.currentTarget.selectionStart;
+    cursorPositionRef.current = position ?? 0;
+  };
+  const handleCursorPositionOnClick = () => {
+    const el = inputRef.current;
+    if (el) {
+      const cursorPos = el.selectionStart;
+      cursorPositionRef.current = cursorPos ?? 0;
+    }
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -79,12 +55,13 @@ export default function CreateMessageForm() {
       } = await sendMessageApi({
         sentAt,
         content: text,
-        receiverIds: currChat.receivers.map((r) => r.id),
+        receiverIds: currChat.participants
+          .filter((p) => p.id !== authUser?.id)
+          .map((r) => r.id),
         chatId: currChat.id,
+        chatName: currChat.name ?? undefined,
+        isGroup: currChat.isGroup,
       });
-      // if (currChat.chatId === null) {
-      //   setParams({ id: data.message.chatId });
-      // }
       await audio.play();
       dispatch(updateCurrChat(message));
       const transformedMessage: TFetchMessageFromApi = {
@@ -110,7 +87,12 @@ export default function CreateMessageForm() {
     >
       {showPicker && (
         <Box position="absolute" bottom="100%" left={0}>
-          <Picker data={data} onEmojiSelect={handleEmojiSelect} />
+          <EmojiPicker
+            cursorPosition={cursorPositionRef}
+            inputRef={inputRef}
+            setText={setText}
+            open={showPicker}
+          />
         </Box>
       )}
       <IconButton
@@ -130,12 +112,10 @@ export default function CreateMessageForm() {
         }}
       >
         <InputBase
-          onKeyUp={updateCursorPosition}
-          onMouseUp={updateCursorPosition} // Update cursor position on click
-          onFocus={updateCursorPosition}
           onChange={handleTextChange}
-          onBlur={handleOnBlur}
           inputRef={inputRef}
+          onKeyUp={handleCursorPosition}
+          onClick={handleCursorPositionOnClick}
           value={text}
           fullWidth
           multiline

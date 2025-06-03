@@ -1,11 +1,10 @@
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 
 export default class ChatRepo {
-  async create(name?: string) {
+  async create(data: Prisma.ChatCreateInput) {
     const result = await prisma.chat.create({
-      data: {
-        name,
-      },
+      data,
     });
     return result;
   }
@@ -54,6 +53,7 @@ export default class ChatRepo {
     return result.map((chat) => ({
       id: chat.id,
       name: chat.name,
+      isGroup: chat.isGroup,
       participants: chat.participants.map((p) => p.user),
       message: {
         content: chat.messages[0].content,

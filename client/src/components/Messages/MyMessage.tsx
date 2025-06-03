@@ -1,4 +1,4 @@
-import { TMessage } from "@/lib/redux/messageSlice";
+import { TFetchMessageFromApi } from "@/api/chat.api";
 import { formatClock } from "@/helpers/formatClock";
 import DoneAll from "@mui/icons-material/DoneAll";
 import Box from "@mui/material/Box";
@@ -7,7 +7,7 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
 interface Props {
-  message: TMessage;
+  message: TFetchMessageFromApi;
 }
 
 export default function MyMessage({ message }: Props) {

@@ -10,7 +10,9 @@ export const schema = z.object({
     ),
   receiverIds: z.number().array(),
   chatId: z.number().nullable(),
-  sentAt: z.string().transform((val) => new Date(val))
+  sentAt: z.string().transform((val) => new Date(val)),
+  chatName: z.string().optional(),
+  isGroup: z.boolean().optional()
 });
 
 export type SendMessageInput = z.infer<typeof schema>;

@@ -7,7 +7,7 @@ import DialogActions from "@mui/material/DialogActions";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import Typography from "@mui/material/Typography";
-import { Groups } from "@mui/icons-material";
+import CreateIcon from "@mui/icons-material/Create";
 import Checkbox from "@mui/material/Checkbox";
 
 import TextField from "@mui/material/TextField";
@@ -20,8 +20,10 @@ import Avatar from "@mui/material/Avatar";
 import { useEffect, useState } from "react";
 import { useDebounce } from "use-debounce";
 import { searchUserApi, TSearchUserResultFromApi } from "@/api/user.api";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setSearchResult } from "@/lib/redux/userSlice";
+import { RootState } from "@/lib/redux/store";
+import { initNewChat } from "@/lib/redux/chatSlice";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -32,7 +34,8 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-export default function ModalCreateGroupChat() {
+export default function ModalCreateNewChat() {
+  const { user: authUser } = useSelector((state: RootState) => state.auth);
   const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
@@ -56,13 +59,13 @@ export default function ModalCreateGroupChat() {
   };
 
   const [key, setKey] = useState("");
-  const [value] = useDebounce(key, 500);
+  const [value, { isPending }] = useDebounce(key, 500);
   useEffect(() => {
     if (!!value) {
       setLoading(true);
       searchUserApi(value)
         .then(({ data }) => {
-          setUsers(data.users);
+          setUsers(data.users.filter((u) => u.id !== authUser?.id));
         })
         .finally(() => {
           setLoading(false);
@@ -74,10 +77,21 @@ export default function ModalCreateGroupChat() {
     setSelectedUsers((v) => v.filter((user) => user.id !== userId));
   };
 
+  const initChat = () => {
+    if (!authUser) return;
+    dispatch(
+      initNewChat({
+        isGroup: selectedUsers.length > 1,
+        users: [...selectedUsers, authUser],
+      })
+    );
+    handleClose();
+  };
+
   return (
     <>
       <IconButton onClick={handleClickOpen} title="Create group chat">
-        <Groups color="info" />
+        <CreateIcon color="info" />
       </IconButton>
       <BootstrapDialog
         onClose={handleClose}
@@ -85,7 +99,7 @@ export default function ModalCreateGroupChat() {
         open={open}
       >
         <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
-          Create Group Chat
+          Create New Chat
         </DialogTitle>
         <IconButton
           aria-label="close"
@@ -117,6 +131,7 @@ export default function ModalCreateGroupChat() {
           >
             {selectedUsers.map((user) => (
               <Chip
+                key={user.id}
                 sx={{ width: "max-content" }}
                 label={user.username}
                 onDelete={() => deleteFromSelectedUsers(user.id)}
@@ -130,7 +145,7 @@ export default function ModalCreateGroupChat() {
             </Divider>
 
             <Stack height={300} direction="column" gap={2}>
-              {loading ? (
+              {loading || isPending() ? (
                 <Box
                   width="100%"
                   height="100%"
@@ -143,6 +158,7 @@ export default function ModalCreateGroupChat() {
               ) : (
                 users.map((user) => (
                   <Box
+                    key={user.id}
                     width="100%"
                     display={"flex"}
                     alignItems={"center"}
@@ -167,7 +183,7 @@ export default function ModalCreateGroupChat() {
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button autoFocus onClick={handleClose}>
+          <Button autoFocus onClick={initChat}>
             Chat
           </Button>
           <Button autoFocus onClick={handleClose}>

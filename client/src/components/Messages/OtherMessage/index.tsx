@@ -1,16 +1,18 @@
-import { addJustReadMessageIds, TMessage } from "@/lib/redux/messageSlice";
+import { TFetchMessageFromApi } from "@/api/chat.api";
 import { formatClock } from "@/helpers/formatClock";
-import EmojiEmotions from "@mui/icons-material/EmojiEmotions";
-import { Container, IconButton } from "@mui/material";
+import { addJustReadMessageIds } from "@/lib/redux/messageSlice";
+import { Container } from "@mui/material";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { useInView } from "react-intersection-observer";
 import { useEffect } from "react";
+import { useInView } from "react-intersection-observer";
 import { useDispatch } from "react-redux";
+import ReactionPicker from "./ReactionPicker";
+import EmojiPicker, { Theme } from "emoji-picker-react";
 
 interface Props {
-  message: TMessage;
+  message: TFetchMessageFromApi;
 }
 
 export default function OtherMessage({ message }: Props) {
@@ -28,7 +30,15 @@ export default function OtherMessage({ message }: Props) {
   }, [inView]);
 
   return (
-    <Stack component="div" ref={ref} alignSelf="start">
+    <Stack component="div" position="relative" ref={ref} alignSelf="start">
+      <Box position="absolute" top={-60} left={1}>
+        <EmojiPicker
+          open={true}
+          theme={Theme.DARK}
+          reactionsDefaultOpen={true}
+          allowExpandReactions={false}
+        />
+      </Box>
       <Container maxWidth="sm">
         <Stack direction="row" gap={1}>
           <Box
@@ -42,9 +52,7 @@ export default function OtherMessage({ message }: Props) {
             <Typography>{message.content}</Typography>
           </Box>
           <Stack direction="column" alignSelf="end">
-            <IconButton>
-              <EmojiEmotions color="disabled" />
-            </IconButton>
+            <ReactionPicker />
             <Typography color="textDisabled" fontSize="0.7rem">
               {clock}
             </Typography>

@@ -8,7 +8,7 @@ export const sendMessage = async (
   next: NextFunction
 ) => {
   const userId = req.user?.id;
-  const { content, receiverIds, sentAt } = req.body as SendMessageInput;
+  const { content, receiverIds, sentAt, chatName, isGroup } = req.body as SendMessageInput;
   let { chatId } = req.body as SendMessageInput;
 
   const chatService = new ChatService();
@@ -20,7 +20,7 @@ export const sendMessage = async (
     }
 
     if (!chatId) {
-      const newChat = await chatService.initChat();
+      const newChat = await chatService.initChat({ isGroup, name: chatName });
       chatId = newChat.id;
       await chatService.addChatParticipants(chatId, [...receiverIds, userId]);
     }
@@ -29,7 +29,7 @@ export const sendMessage = async (
       chatId,
       content,
       sentAt,
-      userId
+      userId,
     );
     res.status(201).json({ message });
     return;

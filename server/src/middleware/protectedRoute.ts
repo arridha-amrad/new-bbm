@@ -14,12 +14,12 @@ export const protectedRoute = async (
     const authHeader = req.headers["authorization"];
 
     if (!authHeader?.startsWith("Bearer ")) {
-      throw new Error();
+      throw new Error("Not bearer token format");
     }
 
     const token = authHeader.split(" ")[1];
     if (!token) {
-      throw new Error();
+      throw new Error("No token after split");
     }
 
     const { id, jwtVersion, jti } = (await tokenService.verifyJwt(
@@ -27,12 +27,12 @@ export const protectedRoute = async (
     )) as TokenPayload;
 
     if (!id || !jwtVersion || !jti) {
-      throw new Error();
+      throw new Error("Invalid token payload");
     }
 
     const hasBlackedList = await authService.hasTokenBlackListed(jti);
     if (hasBlackedList) {
-      throw new Error();
+      throw new Error("Token has been blacklisted");
     }
 
     req.user = {
@@ -40,7 +40,8 @@ export const protectedRoute = async (
       jti,
     };
     next();
-  } catch (err) {
+  } catch (err: any) {
+    console.log(err.message);
     if (err instanceof JoseErrors.JWTExpired) {
       res.status(401).json({ message: "Token expired" });
     } else {

@@ -1,12 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { TSearchUserResultFromApi } from "@/api/user.api";
-import { TFetchChatFromApi, TFetchMessageFromApi } from "@/api/chat.api";
+import { TFetchMessageFromApi } from "@/api/chat.api";
 
 export type TChat = {
   id: number | null;
+  isGroup: boolean;
   name: string | null;
-  receivers: {
+  participants: {
     id: number;
     username: string;
     imageURL: string | null;
@@ -41,15 +42,16 @@ export const chatSlice = createSlice({
           new Date(a.message.date ?? new Date()).getTime()
       );
     },
-    initNewChat: (state, action: PayloadAction<TSearchUserResultFromApi[]>) => {
+    initNewChat: (state, action: PayloadAction<{ users: TSearchUserResultFromApi[], isGroup: boolean }>) => {
       const newChat: TChat = {
         id: null,
         name: null,
+        isGroup: action.payload.isGroup,
         message: {
           content: "",
           date: null,
         },
-        receivers: action.payload,
+        participants: action.payload.users,
       };
       state.chats.unshift(newChat);
       state.currChat = newChat;

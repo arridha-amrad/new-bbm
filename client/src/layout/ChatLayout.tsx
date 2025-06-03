@@ -1,15 +1,12 @@
-import ModalCreateGroupChat from "@/components/ModalCreateGroupChat";
+import ModalCreateGroupChat from "@/components/ModalCreateNewChat";
 import RecentChats from "@/components/RecentChats";
-import Search from "@/components/SearchUserInput";
-import SearchUserResult from "@/components/SearchUserInput/SearchUserResult";
 import TabBar from "@/components/TabBar";
 import useFetchUserChats from "@/hooks/useFetchUserChats";
 import { RootState } from "@/lib/redux/store";
-import { CreateOutlined, Groups } from "@mui/icons-material";
-import { CircularProgress } from "@mui/material";
+import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
+import CircularProgress from "@mui/material/CircularProgress";
 import Divider from "@mui/material/Divider";
-import IconButton from "@mui/material/IconButton";
 import Snackbar from "@mui/material/Snackbar";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
@@ -18,32 +15,37 @@ import { useSelector } from "react-redux";
 import { Outlet } from "react-router-dom";
 
 export default function ChatLayout() {
-  const { searchResult, searchActive } = useSelector(
-    (state: RootState) => state.user
-  );
-
+  const { user: authUser } = useSelector((state: RootState) => state.auth);
   const [chatError, setChatError] = useState("");
-
   const loadingChat = useFetchUserChats();
-
+  if (!authUser) return null;
   return (
     <>
       <Box height={"inherit"} flex="1">
         <Stack height={"inherit"} display={"flex"} direction={"column"}>
           <Stack
-            sx={{ padding: "0.5rem" }}
-            alignItems={"center"}
-            direction={"row"}
+            position="relative"
+            direction="row"
+            alignItems="center"
+            gap={2}
+            padding={2}
           >
-            <Box display={"flex"} justifyContent="center" flex="1">
-              <Typography fontWeight={"700"}>Chats</Typography>
+            <Box position="absolute" right={2} top={2}>
+              <ModalCreateGroupChat />
             </Box>
-            <ModalCreateGroupChat />
+            <Avatar
+              src={authUser.imageURL ?? undefined}
+              alt={authUser.username}
+              sx={{ width: 80, height: 80 }}
+            />
+            <Stack>
+              <Typography fontWeight="500" variant="h5">
+                {authUser.username}
+              </Typography>
+              <Typography>{authUser.email}</Typography>
+            </Stack>
           </Stack>
-          <Search />
-          {searchActive && searchResult.length > 0 ? (
-            <SearchUserResult setChatError={setChatError} />
-          ) : loadingChat ? (
+          {loadingChat ? (
             <Box
               display="flex"
               alignItems="center"
@@ -59,7 +61,7 @@ export default function ChatLayout() {
           <TabBar />
         </Stack>
       </Box>
-      <Divider sx={{ minHeight: "100vh" }} orientation="vertical" />
+      <Divider orientation="vertical" />
       <Box height={"inherit"} flex="2">
         <Outlet />
       </Box>
