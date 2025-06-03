@@ -4,7 +4,6 @@ import { RootState } from "@/lib/redux/store";
 import Stack from "@mui/material/Stack";
 import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useSearchParams } from "react-router-dom";
 import { useDebounce } from "use-debounce";
 import MyMessage from "./MyMessage";
 import OtherMessage from "./OtherMessage";
@@ -18,18 +17,17 @@ export default function Messages() {
 
   const ref = useRef<HTMLDivElement | null>(null);
 
-  const [params] = useSearchParams();
   const dispatch = useDispatch();
 
   const [values] = useDebounce(justReadMessageIds, 1000);
 
-  useEffect(() => {
-    if (values) {
-      const newSet = new Set(values);
-      const newArr = Array.from(newSet);
-      console.log(newArr);
-    }
-  }, [values]);
+  // useEffect(() => {
+  //   if (values) {
+  //     const newSet = new Set(values);
+  //     const newArr = Array.from(newSet);
+  //     console.log(newArr);
+  //   }
+  // }, [values]);
 
   useEffect(() => {
     if (currChat?.id) {
@@ -48,7 +46,7 @@ export default function Messages() {
   return (
     <Stack padding={2} flex={"1"} gap={2} overflow={"auto"}>
       {messages.map((msg) =>
-        msg.userId === user?.id ? (
+        msg.user.id === user?.id ? (
           <MyMessage message={msg} key={msg.id} />
         ) : (
           <OtherMessage message={msg} key={msg.id} />

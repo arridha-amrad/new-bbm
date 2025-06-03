@@ -42,7 +42,13 @@ export const chatSlice = createSlice({
           new Date(a.message.date ?? new Date()).getTime()
       );
     },
-    initNewChat: (state, action: PayloadAction<{ users: TSearchUserResultFromApi[], isGroup: boolean }>) => {
+    initNewChat: (
+      state,
+      action: PayloadAction<{
+        users: TSearchUserResultFromApi[];
+        isGroup: boolean;
+      }>
+    ) => {
       const newChat: TChat = {
         id: null,
         name: null,
@@ -56,35 +62,6 @@ export const chatSlice = createSlice({
       state.chats.unshift(newChat);
       state.currChat = newChat;
     },
-    // addNewChat: (state, action: PayloadAction<TUSerSearch>) => {
-    //   const { imageURL, username, id } = action.payload;
-    //   const newChat: TChat = {
-    //     chatName: null,
-    //     lastMessage: "",
-    //     chatId: null,
-    //     totalNotification: 0,
-    //     latestMessageDate: null,
-    //     isTyping: false,
-    //     onlineStatus: "",
-    //   };
-    //   const isChatExists = state.chats.find((c) => c.chatId === newChat.chatId);
-    //   if (!isChatExists) {
-    //     state.chats.unshift(newChat);
-    //   }
-    //   state.currChat = newChat;
-    // },
-    // updateCurrChatOnlineStatus: (state, action: PayloadAction<string>) => {
-    //   const currChat = state.currChat;
-    //   if (currChat) {
-    //     currChat.onlineStatus = action.payload;
-    //   }
-    // },
-    // updateCurrChatIsTyping: (state, action: PayloadAction<boolean>) => {
-    //   const currChat = state.currChat;
-    //   if (currChat) {
-    //     currChat.isTyping = action.payload;
-    //   }
-    // },
     updateCurrChat: (state, action: PayloadAction<TFetchMessageFromApi>) => {
       const { sentAt, chatId, content } = action.payload;
       if (state.currChat) {
@@ -102,12 +79,6 @@ export const chatSlice = createSlice({
   },
 });
 
-export const {
-  setChats,
-  setCurrChat,
-  updateCurrChat,
-  initNewChat,
-  // updateCurrChatOnlineStatus,
-  // updateCurrChatIsTyping,
-} = chatSlice.actions;
+export const { setChats, setCurrChat, updateCurrChat, initNewChat } =
+  chatSlice.actions;
 export const chatReducer = chatSlice.reducer;

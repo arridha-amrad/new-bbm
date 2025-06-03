@@ -8,14 +8,15 @@ export const sendMessage = async (
   next: NextFunction
 ) => {
   const userId = req.user?.id;
-  const { content, receiverIds, sentAt, chatName, isGroup } = req.body as SendMessageInput;
+  const { content, receiverIds, sentAt, chatName, isGroup } =
+    req.body as SendMessageInput;
   let { chatId } = req.body as SendMessageInput;
 
   const chatService = new ChatService();
 
   try {
     if (!userId) {
-      res.sendStatus(401);
+      res.status(401).json({ message: "UserId is missing" });
       return;
     }
 
@@ -29,7 +30,7 @@ export const sendMessage = async (
       chatId,
       content,
       sentAt,
-      userId,
+      userId
     );
     res.status(201).json({ message });
     return;

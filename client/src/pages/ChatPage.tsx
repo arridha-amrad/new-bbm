@@ -7,13 +7,18 @@ import Stack from "@mui/material/Stack";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { urls } from "./urls";
+import { useEffect } from "react";
 
 export default function ChatPage() {
   const { currChat } = useSelector((state: RootState) => state.chat);
   const navigate = useNavigate();
-  if (!currChat) {
-    navigate(urls.home, { replace: true });
-  }
+
+  useEffect(() => {
+    if (!currChat) {
+      navigate(urls.home, { replace: true });
+    }
+  }, []);
+
   return (
     <Stack display={"flex"} direction={"column"} height={"inherit"}>
       <ChatUser />

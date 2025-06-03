@@ -1,7 +1,7 @@
 import { formatClock } from "@/helpers/formatClock";
 import { setCurrChat, TChat } from "@/lib/redux/chatSlice";
 import { RootState } from "@/lib/redux/store";
-import { AvatarGroup, CardActionArea } from "@mui/material";
+import { AvatarGroup, Box, CardActionArea } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import Badge from "@mui/material/Badge";
 import Card from "@mui/material/Card";
@@ -44,7 +44,7 @@ export default function Chat({ chat }: Props) {
           py: 1,
         }}
       >
-        <Stack gap={2} alignItems="center" direction={"row"}>
+        <Stack width="100%" gap={2} alignItems="center" direction={"row"}>
           <AvatarGroup spacing="small">
             {chat.isGroup
               ? chat.participants.map((p) => (
@@ -56,7 +56,12 @@ export default function Chat({ chat }: Props) {
                     <Avatar src={u.imageURL ?? undefined} alt={u.username} />
                   ))}
           </AvatarGroup>
-          <Stack width="100%" direction={"column"}>
+          <Stack
+            flex={1}
+            flexWrap="nowrap"
+            direction={"column"}
+            overflow="hidden"
+          >
             {!chat.isGroup && (
               <Typography>
                 {chat.participants
@@ -65,14 +70,13 @@ export default function Chat({ chat }: Props) {
               </Typography>
             )}
             <Typography
-              color="textSecondary"
               sx={{
-                display: "-webkit-box",
-                WebkitBoxOrient: "vertical",
-                WebkitLineClamp: 2,
+                width: "100%",
+                whiteSpace: "nowrap",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
               }}
+              color="textSecondary"
             >
               {chat.message.content}
             </Typography>

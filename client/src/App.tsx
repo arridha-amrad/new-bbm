@@ -7,7 +7,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Route, Routes } from "react-router-dom";
 import Banner from "./components/Banner";
 import AuthLayout from "./layout/AuthLayout";
-import HomePage from "./layout/ChatLayout";
+import ChatLayout from "./layout/ChatLayout";
 import RequireAuthLayout from "./layout/RequireAuthLayout";
 import ChatPage from "./pages/ChatPage";
 import LoginPage from "./pages/LoginPage";
@@ -26,7 +26,7 @@ export default function App() {
       <CssBaseline />
       <Routes>
         <Route element={<RequireAuthLayout />}>
-          <Route element={<HomePage />}>
+          <Route element={<ChatLayout />}>
             <Route index element={<Banner />} />
             <Route path={urls.chat} element={<ChatPage />} />
           </Route>

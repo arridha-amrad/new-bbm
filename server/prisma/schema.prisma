@@ -8,21 +8,22 @@ datasource db {
 }
 
 model User {
-  id             Int             @id @unique @default(autoincrement())
-  username       String          @unique
-  email          String          @unique
-  password       String
-  imageURL       String?
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
-  jwtVersion     String
-  tokens         Token[]
-  messages       Message[]
-  participants   Participant[]
-  lastSeen       LastSeen?
-  messageReaders MessageReader[]
-  RefreshToken   RefreshToken[]
-  ActiveToken    ActiveToken[]
+  id              Int               @id @unique @default(autoincrement())
+  username        String            @unique
+  email           String            @unique
+  password        String
+  imageURL        String?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  jwtVersion      String
+  tokens          Token[]
+  messages        Message[]
+  participants    Participant[]
+  lastSeen        LastSeen?
+  messageReaders  MessageReader[]
+  RefreshToken    RefreshToken[]
+  ActiveToken     ActiveToken[]
+  MessageReaction MessageReaction[]
 
   @@index([username, email])
   @@map("users")
@@ -49,26 +50,17 @@ model Chat {
 }
 
 model Message {
-  id      Int             @id @default(autoincrement())
-  content String
-  sentAt  DateTime        @default(now())
-  chatId  Int
-  userId  Int
-  chat    Chat            @relation(fields: [chatId], references: [id], onDelete: Cascade)
-  user    User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  readers MessageReader[]
+  id        Int               @id @default(autoincrement())
+  content   String
+  sentAt    DateTime          @default(now())
+  chatId    Int
+  userId    Int
+  chat      Chat              @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  readers   MessageReader[]
+  reactions MessageReaction[]
 
   @@map("messages")
-}
-
-model Participant {
-  id     Int  @id @default(autoincrement())
-  chatId Int
-  userId Int
-  chat   Chat @relation(fields: [chatId], references: [id], onDelete: Cascade)
-  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("participants")
 }
 
 model MessageReader {
@@ -80,6 +72,31 @@ model MessageReader {
   reader    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("message_readers")
+}
+
+model MessageReaction {
+  id        Int      @id @default(autoincrement())
+  value     String
+  unified   String
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messageId Int
+  message   Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([unified, userId, messageId])
+  @@index([messageId])
+  @@map("message_reactions")
+}
+
+model Participant {
+  id     Int  @id @default(autoincrement())
+  chatId Int
+  userId Int
+  chat   Chat @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("participants")
 }
 
 model LastSeen {
@@ -101,6 +118,7 @@ model RefreshToken {
   createdAt DateTime @default(now())
 
   @@index([token, deviceId])
+  @@map("refresh_tokens")
 }
 
 model ActiveToken {
@@ -113,4 +131,5 @@ model ActiveToken {
   createdAt DateTime @default(now())
 
   @@index([jti, deviceId])
+  @@map("active_tokens")
 }

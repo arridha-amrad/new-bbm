@@ -1,7 +1,7 @@
-import { sendMessageApi, TFetchMessageFromApi } from "@/api/chat.api";
+import { sendMessageApi } from "@/api/chat.api";
 import SentAudio from "@/assets/sent.mp3";
 import { updateCurrChat } from "@/lib/redux/chatSlice";
-import { addMessage } from "@/lib/redux/messageSlice";
+import { addNewMessage } from "@/lib/redux/messageSlice";
 import { RootState } from "@/lib/redux/store";
 import Add from "@mui/icons-material/Add";
 import EmojiEmotions from "@mui/icons-material/EmojiEmotions";
@@ -46,7 +46,7 @@ export default function CreateMessageForm() {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!currChat) return;
+    if (!currChat || !authUser) return;
     const audio = new Audio(SentAudio);
     const sentAt = new Date().toISOString();
     try {
@@ -63,12 +63,36 @@ export default function CreateMessageForm() {
         isGroup: currChat.isGroup,
       });
       await audio.play();
-      dispatch(updateCurrChat(message));
-      const transformedMessage: TFetchMessageFromApi = {
-        ...message,
-        readers: [],
-      };
-      dispatch(addMessage(transformedMessage));
+      dispatch(
+        updateCurrChat({
+          chatId: message.chatId,
+          content: message.content,
+          id: message.id,
+          sentAt: message.sentAt,
+          user: {
+            id: authUser.id,
+            imageURL: authUser.imageURL,
+            username: authUser.username,
+          },
+          reactions: [],
+          readers: [],
+        })
+      );
+      dispatch(
+        addNewMessage({
+          chatId: message.chatId,
+          content: message.content,
+          id: message.id,
+          sentAt: message.sentAt,
+          user: {
+            id: authUser.id,
+            imageURL: authUser.imageURL,
+            username: authUser.username,
+          },
+          reactions: [],
+          readers: [],
+        })
+      );
       setText("");
     } catch (error) {
       console.log(error);

@@ -7,6 +7,19 @@ type TCreate = {
   sentAt: Date;
 };
 
+type TReaction = {
+  id: number;
+  value: string;
+  unified: string;
+  users: [
+    {
+      id: number;
+      username: string;
+      imageURL: string | null;
+    }
+  ];
+};
+
 export default class MessageRepo {
   async createOne({ chatId, content, sentAt, userId }: TCreate) {
     const result = await prisma.message.create({
@@ -26,6 +39,24 @@ export default class MessageRepo {
         chatId,
       },
       include: {
+        user: {
+          select: {
+            id: true,
+            username: true,
+            imageURL: true,
+          },
+        },
+        reactions: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                username: true,
+                imageURL: true,
+              },
+            },
+          },
+        },
         readers: {
           include: {
             reader: {
@@ -42,15 +73,32 @@ export default class MessageRepo {
       },
     });
     const messages = result.map((data) => {
+      const reactions = data.reactions.reduce((prev, curr) => {
+        const reaction = prev.find((v) => v.unified === curr.unified);
+        if (!reaction) {
+          prev.push({
+            ...curr,
+            users: [curr.user],
+          });
+        } else {
+          reaction.users.push(curr.user);
+        }
+        return prev;
+      }, [] as TReaction[]);
       return {
         id: data.id,
         chatId: data.chatId,
         content: data.content,
         sentAt: data.sentAt,
-        userId: data.userId,
+        user: {
+          id: data.user.id,
+          username: data.user.username,
+          imageURL: data.user.imageURL,
+        },
         readers: data.readers.map((r) => ({
           ...r.reader,
         })),
+        reactions,
       };
     });
     return messages;

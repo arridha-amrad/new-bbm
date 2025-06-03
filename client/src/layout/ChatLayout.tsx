@@ -21,7 +21,7 @@ export default function ChatLayout() {
   if (!authUser) return null;
   return (
     <>
-      <Box height={"inherit"} flex="1">
+      <Box height={"inherit"} width="400px">
         <Stack height={"inherit"} display={"flex"} direction={"column"}>
           <Stack
             position="relative"
@@ -62,7 +62,7 @@ export default function ChatLayout() {
         </Stack>
       </Box>
       <Divider orientation="vertical" />
-      <Box height={"inherit"} flex="2">
+      <Box height={"inherit"} flex="1">
         <Outlet />
       </Box>
       <Snackbar
