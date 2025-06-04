@@ -3,7 +3,7 @@ import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { useSelector } from "react-redux";
-import Chat from "./UserChatCard";
+import UserChatCard from "./UserChatCard";
 
 export default function RecentChats() {
   const { chats } = useSelector((state: RootState) => state.chat);
@@ -16,7 +16,7 @@ export default function RecentChats() {
         </Typography>
       </Divider>
       {chats.map((chat, i) => (
-        <Chat chat={chat} key={i} />
+        <UserChatCard chat={chat} key={i} />
       ))}
     </Stack>
   );

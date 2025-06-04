@@ -1,15 +1,19 @@
 {
   "name": "node_app",
   "version": "1.0.0",
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
   "description": "",
   "main": "index.js",
   "scripts": {
     "dev": "tsx watch src",
     "build": "tsc",
-    "migrate": "npx drizzle-kit generate && npx drizzle-kit migrate",
-    "studio": "npx drizzle-kit studio",
+    "db:migrate": "npx prisma migrate dev",
+    "db:studio": "npx prisma studio",
     "compose:up": "docker compose up -d",
-    "compose:down": "docker compose down -d"
+    "compose:down": "docker compose down -d",
+    "seed": "npx prisma db seed"
   },
   "keywords": [],
   "author": "Arridha Amrad",

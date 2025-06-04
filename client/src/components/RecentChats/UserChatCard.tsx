@@ -1,13 +1,11 @@
 import { formatClock } from "@/helpers/formatClock";
 import { setCurrChat, TChat } from "@/lib/redux/chatSlice";
 import { RootState } from "@/lib/redux/store";
-import { AvatarGroup, Box, CardActionArea } from "@mui/material";
+import { AvatarGroup, CardActionArea } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
-import Badge from "@mui/material/Badge";
 import Card from "@mui/material/Card";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
 

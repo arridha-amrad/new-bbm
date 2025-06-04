@@ -24,7 +24,8 @@ export default function MyMessage({ message }: Props) {
           </Stack>
           <Box
             sx={{
-              background: "rgba(41,182,246,1)",
+              color: "#333",
+              background: "rgb(255, 255, 255)",
               borderRadius: "0.5rem 0.5rem 0rem 0.5rem",
             }}
             px={2}

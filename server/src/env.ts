@@ -9,6 +9,7 @@ dotenv.config({
 
 export const env = {
   CLIENT_ORIGIN: process.env.CLIENT_ORIGIN!,
+  CLIENT_ORIGIN2: process.env.CLIENT_ORIGIN2!,
   BASE_URL: process.env.BASE_URL!,
   PORT: process.env.PORT!,
   JWT_SECRET: process.env.JWT_SECRET!,

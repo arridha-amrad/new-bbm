@@ -15,6 +15,7 @@ import EmojiPicker, { EmojiClickData, Theme } from "emoji-picker-react";
 import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import { useDispatch, useSelector } from "react-redux";
+import OtherMessageReactions from "./OtherMessageReactions";
 
 interface Props {
   message: TFetchMessageFromApi;
@@ -101,23 +102,7 @@ export default function OtherMessage({ message }: Props) {
             >
               <Typography>{message.content}</Typography>
             </Box>
-            <Stack direction="row">
-              {message.reactions.map((r, i) => (
-                <Stack key={i} direction="column" alignItems="center">
-                  <Typography>{r.value}</Typography>
-                  <AvatarGroup spacing="small">
-                    {r.users.map((user, i) => (
-                      <Avatar
-                        key={i}
-                        src={user.imageURL ?? undefined}
-                        sx={{ width: 15, height: 15 }}
-                        alt={user.username}
-                      />
-                    ))}
-                  </AvatarGroup>
-                </Stack>
-              ))}
-            </Stack>
+            <OtherMessageReactions reactions={message.reactions} />
           </Stack>
           <Stack direction="column" alignSelf="start">
             <IconButton

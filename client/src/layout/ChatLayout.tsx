@@ -13,38 +13,21 @@ import Typography from "@mui/material/Typography";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { Outlet } from "react-router-dom";
+import AuthenticatedUserCard from "./ChatLayout/AuthenticatedUserCard";
 
 export default function ChatLayout() {
   const { user: authUser } = useSelector((state: RootState) => state.auth);
   const [chatError, setChatError] = useState("");
+
   const loadingChat = useFetchUserChats();
+
   if (!authUser) return null;
+
   return (
     <>
       <Box height={"inherit"} width="400px">
         <Stack height={"inherit"} display={"flex"} direction={"column"}>
-          <Stack
-            position="relative"
-            direction="row"
-            alignItems="center"
-            gap={2}
-            padding={2}
-          >
-            <Box position="absolute" right={2} top={2}>
-              <ModalCreateGroupChat />
-            </Box>
-            <Avatar
-              src={authUser.imageURL ?? undefined}
-              alt={authUser.username}
-              sx={{ width: 80, height: 80 }}
-            />
-            <Stack>
-              <Typography fontWeight="500" variant="h5">
-                {authUser.username}
-              </Typography>
-              <Typography>{authUser.email}</Typography>
-            </Stack>
-          </Stack>
+          <AuthenticatedUserCard />
           {loadingChat ? (
             <Box
               display="flex"
@@ -58,7 +41,7 @@ export default function ChatLayout() {
             <RecentChats />
           )}
           <Divider />
-          <TabBar />
+          {/* <TabBar /> */}
         </Stack>
       </Box>
       <Divider orientation="vertical" />

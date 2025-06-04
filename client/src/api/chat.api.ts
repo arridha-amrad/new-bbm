@@ -31,6 +31,19 @@ export const fetchChatsApi = async () => {
   return response;
 };
 
+export type TMessageReaction =
+  {
+    id: number;
+    value: string;
+    users: [
+      {
+        id: number;
+        username: string;
+        imageURL: string | null;
+      }
+    ];
+  }
+
 export type TFetchMessageFromApi = {
   id: number;
   chatId: number;
@@ -48,17 +61,7 @@ export type TFetchMessageFromApi = {
     imageURL: string | null;
     createdAt: Date;
   }[];
-  reactions: {
-    id: number;
-    value: string;
-    users: [
-      {
-        id: number;
-        username: string;
-        imageURL: string | null;
-      }
-    ];
-  }[];
+  reactions: TMessageReaction[];
 };
 
 export const fetchChatMessagesApi = async (chatId: number) => {

@@ -1,29 +1,24 @@
-import Button from "@mui/material/Button";
-import { styled } from "@mui/material/styles";
-import Dialog from "@mui/material/Dialog";
-import DialogTitle from "@mui/material/DialogTitle";
-import DialogContent from "@mui/material/DialogContent";
-import DialogActions from "@mui/material/DialogActions";
-import IconButton from "@mui/material/IconButton";
-import CloseIcon from "@mui/icons-material/Close";
-import Typography from "@mui/material/Typography";
-import CreateIcon from "@mui/icons-material/Create";
-import Checkbox from "@mui/material/Checkbox";
-
-import TextField from "@mui/material/TextField";
-import Box from "@mui/material/Box";
-import Chip from "@mui/material/Chip";
-import Divider from "@mui/material/Divider";
-import Stack from "@mui/material/Stack";
-import CircularProgress from "@mui/material/CircularProgress";
-import Avatar from "@mui/material/Avatar";
-import { useEffect, useState } from "react";
-import { useDebounce } from "use-debounce";
-import { searchUserApi, TSearchUserResultFromApi } from "@/api/user.api";
-import { useDispatch, useSelector } from "react-redux";
-import { setSearchResult } from "@/lib/redux/userSlice";
-import { RootState } from "@/lib/redux/store";
+import { TSearchUserResultFromApi } from "@/api/user.api";
+import useSearchUser from "@/hooks/useSearchUser";
 import { initNewChat } from "@/lib/redux/chatSlice";
+import { RootState } from "@/lib/redux/store";
+import CloseIcon from "@mui/icons-material/Close";
+import CreateIcon from "@mui/icons-material/Create";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Chip from "@mui/material/Chip";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import Divider from "@mui/material/Divider";
+import IconButton from "@mui/material/IconButton";
+import Stack from "@mui/material/Stack";
+import { styled } from "@mui/material/styles";
+import TextField from "@mui/material/TextField";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import SearchUserResult from "./SearchUserResult";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -37,45 +32,18 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 export default function ModalCreateNewChat() {
   const { user: authUser } = useSelector((state: RootState) => state.auth);
   const [open, setOpen] = useState(false);
+  const dispatch = useDispatch();
+  const [key, setKey] = useState("");
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
   const handleClose = () => {
     setOpen(false);
   };
 
-  const dispatch = useDispatch();
-
-  const [loading, setLoading] = useState(false);
-
-  const [users, setUsers] = useState<TSearchUserResultFromApi[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<
     TSearchUserResultFromApi[]
   >([]);
 
-  const checkIsUserSelected = (user: TSearchUserResultFromApi) => {
-    return !!selectedUsers.find((u) => u.id === user.id);
-  };
-
-  const [key, setKey] = useState("");
-  const [value, { isPending }] = useDebounce(key, 500);
-  useEffect(() => {
-    if (!!value) {
-      setLoading(true);
-      searchUserApi(value)
-        .then(({ data }) => {
-          setUsers(data.users.filter((u) => u.id !== authUser?.id));
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    }
-  }, [value]);
-
-  const deleteFromSelectedUsers = (userId: number) => {
-    setSelectedUsers((v) => v.filter((user) => user.id !== userId));
-  };
+  const { loading, searchResult } = useSearchUser({ key });
 
   const initChat = () => {
     if (!authUser) return;
@@ -88,9 +56,13 @@ export default function ModalCreateNewChat() {
     handleClose();
   };
 
+  const deleteFromSelectedUsers = (userId: number) => {
+    setSelectedUsers((v) => v.filter((user) => user.id !== userId));
+  };
+
   return (
     <>
-      <IconButton onClick={handleClickOpen} title="Create group chat">
+      <IconButton onClick={() => setOpen(true)} title="Create group chat">
         <CreateIcon color="info" />
       </IconButton>
       <BootstrapDialog
@@ -127,6 +99,7 @@ export default function ModalCreateNewChat() {
           <Stack
             direction="row"
             gap={1}
+            flexWrap="wrap"
             marginBottom={selectedUsers.length > 0 ? 4 : 0}
           >
             {selectedUsers.map((user) => (
@@ -143,43 +116,13 @@ export default function ModalCreateNewChat() {
             <Divider textAlign="center">
               <Chip label="Search result" size="small" />
             </Divider>
-
-            <Stack height={300} direction="column" gap={2}>
-              {loading || isPending() ? (
-                <Box
-                  width="100%"
-                  height="100%"
-                  display={"flex"}
-                  alignItems={"center"}
-                  justifyContent={"center"}
-                >
-                  <CircularProgress />
-                </Box>
-              ) : (
-                users.map((user) => (
-                  <Box
-                    key={user.id}
-                    width="100%"
-                    display={"flex"}
-                    alignItems={"center"}
-                    gap={2}
-                  >
-                    <Avatar src={user.imageURL ?? undefined} />
-                    <Typography flex={1}>{user.username}</Typography>
-                    <Checkbox
-                      onChange={() => {
-                        if (checkIsUserSelected(user)) {
-                          deleteFromSelectedUsers(user.id);
-                        } else {
-                          setSelectedUsers((v) => [...v, user]);
-                        }
-                      }}
-                      checked={checkIsUserSelected(user)}
-                    />
-                  </Box>
-                ))
-              )}
-            </Stack>
+            <SearchUserResult
+              setSelectedUsers={setSelectedUsers}
+              deleteFromSelectedUsers={deleteFromSelectedUsers}
+              selectedUsers={selectedUsers}
+              searchResult={searchResult}
+              isLoadingSearchUser={loading}
+            />
           </Box>
         </DialogContent>
         <DialogActions>

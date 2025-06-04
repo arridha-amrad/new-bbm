@@ -17,6 +17,6 @@
     "esModuleInterop": true,
     "types": ["node"]
   },
-  "include": ["src"],
+  "include": ["src", "src/prisma/seed"],
   "exclude": ["node_modules", "dist"]
 }
